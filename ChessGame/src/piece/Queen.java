@@ -31,4 +31,27 @@ public class Queen extends ChessPieces{
     	}
     	return false;
     }
+    public boolean canMove(int targetCol, int targetRow, int a) {
+    	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
+    		if(targetCol == precol || targetRow == prerow)
+    			if(!pieceOnStraightLine(targetCol, targetRow))
+    				return true;
+    		if(Math.abs(targetCol - precol) == Math.abs(targetRow - prerow)) {
+    			if(!pieceOnDiognal(targetCol, targetRow))
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    public boolean canMove(int targetCol, int targetRow, boolean a) {
+    	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
+    		if(targetCol == precol || targetRow == prerow)
+    				return true;
+    		if(Math.abs(targetCol - precol) == Math.abs(targetRow - prerow)) {
+
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }

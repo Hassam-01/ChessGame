@@ -29,4 +29,28 @@ public class Bishop extends ChessPieces{
     	
     	return false;
     }
+    
+    public boolean canMove(int targetCol, int targetRow, int a){
+    	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
+    		
+    		if(Math.abs(targetCol - precol) == Math.abs(targetRow - prerow)) {
+    			if(!pieceOnDiognal(targetCol, targetRow))
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    public boolean canMove(int targetCol, int targetRow, boolean value){
+    	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
+    		
+    		if(Math.abs(targetCol - precol) == Math.abs(targetRow - prerow)) {
+//    			if(!pieceOnDiognal(targetCol, targetRow))
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
 }

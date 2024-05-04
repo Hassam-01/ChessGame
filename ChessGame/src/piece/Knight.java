@@ -27,4 +27,14 @@ public class Knight extends ChessPieces{
     	
     	return false;
     }
+    
+    public boolean canMove(int targetCol, int targetRow, int a){
+    	if(withInBoard(targetCol, targetRow)) {
+    		if(Math.abs(targetCol - precol) * (Math.abs(targetRow- prerow)) == 2) {
+    				return true;
+    		}
+    	}
+    	
+    	return false;
+    }
 }

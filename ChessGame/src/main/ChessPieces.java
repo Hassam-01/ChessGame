@@ -68,7 +68,15 @@ public class ChessPieces {
     	else 
     		return false;
     }
+    
+    public boolean canMove(int tragetCol, int targetRow, int a) {
+    	return false;
+    }
+    
     public boolean canMove(int tragetCol, int targetRow) {
+    	return false;
+    }
+    public boolean canMove(int targetCol, int targetRow, boolean value) {
     	return false;
     }
     
@@ -202,7 +210,7 @@ public class ChessPieces {
     	if(targetRow < prerow) {
   
     		//  up left
-    		for(int c = prerow - 1; c > targetCol; c--) {
+    		for(int c = precol - 1; c > targetCol; c--) {
     			int diff = Math.abs(c - precol);
     			for(ChessPieces P: PanelGame.simpieces) {
     				if(P.col == c && P.row == prerow - diff) {
@@ -213,7 +221,7 @@ public class ChessPieces {
     		}
     	
     		// up right
-    		for(int c = prerow + 1; c < targetCol; c++) {
+    		for(int c = precol + 1; c < targetCol; c++) {
     			int diff = Math.abs(c - precol);
     			for(ChessPieces P: PanelGame.simpieces) {
     				if(P.col == c && P.row == prerow - diff) {
@@ -228,8 +236,7 @@ public class ChessPieces {
     	if(targetRow > prerow) {
     	
     		// down left
-    		if(targetRow < prerow) {
-        		for(int c = prerow - 1; c > targetCol; c--) {
+        		for(int c = precol - 1; c > targetCol; c--) {
         			int diff = Math.abs(c - precol);
         			for(ChessPieces P: PanelGame.simpieces) {
         				if(P.col == c && P.row == prerow + diff) {
@@ -238,11 +245,9 @@ public class ChessPieces {
         				}
         			}
         		}
-    		}
+    		
     		// down right
-
-        		if(targetRow < prerow) {
-            		for(int c = prerow + 1; c < targetCol; c++) {
+            		for(int c = precol + 1; c < targetCol; c++) {
             			int diff = Math.abs(c - precol);
             			for(ChessPieces P: PanelGame.simpieces) {
             				if(P.col == c && P.row == prerow + diff) {
@@ -252,11 +257,8 @@ public class ChessPieces {
             			}
             		}
     	
-    	}
+    	
     		}
     	return false;
     }
 }
-    
-
-

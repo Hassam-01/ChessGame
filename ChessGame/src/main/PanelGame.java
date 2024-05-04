@@ -15,15 +15,24 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
-public class PanelGame extends JPanel implements Runnable{
+import java.util.Scanner;
 
+public class PanelGame extends JPanel implements Runnable{
+	
+Computer Comp = new Computer();	// Computer object to make computer moves
+
+// Scanner Object
+Scanner scan = new Scanner(System.in);
+
+//Comp = new Computer(); // Computer object
+	
  // * declaring the width as final and bit larger than the height so that we have space to
  // * show game statistics  at the side of 800*800 board
  public static final int WIDTH = 990; 
  public static final int HEIGHT = 688; //* Final HEIGHT of 800
  final int FPS = 60; // * no of screen refreshes per second to be made
+ 
  
  Thread gamThread;
  
@@ -33,7 +42,12 @@ public class PanelGame extends JPanel implements Runnable{
  // * Color of the pieces
  public static final int WHITE = 1;
  public static final int BLACK = 0;
- int currentColor = WHITE;
+ 
+ public static final int PVsC = 0;
+ public static final int PVsP = 1;
+ public static int MODE;
+ int currentColor;	// Color to check whose turn is it
+ public static int compColor;   // color for the computer 
  
  // * Boolean values for the piece to move
  boolean canMove; 		// check if the piece is able to move
@@ -41,15 +55,18 @@ public class PanelGame extends JPanel implements Runnable{
  boolean promotion;	// check if the pawn can be promoted
  boolean gameOver; 		// check if checkmate
  boolean stalemate; 	// check stalemate
+ 
  // * Pieces on the board
  public static ArrayList<ChessPieces> simpieces = new ArrayList<>();
  // * pieces would be used for backup to reverse the moves the player made
  public static ArrayList<ChessPieces> pieces = new ArrayList<>();
+ 
  // Array list to display piece that pawn can be promoted to
  ArrayList<ChessPieces> promoPiece = new ArrayList<>();
  
- ChessPieces activePiece, checkingP; // The piece on which the mouse is pressed
+ ChessPieces activePiece, checkingP, compPiece; // The piece on which the mouse is pressed
  public static ChessPieces castlingPiece; // used for castling of kind and rook
+ 
  
  // ! Constructor for PanelGame
  public PanelGame(){
@@ -63,6 +80,35 @@ public class PanelGame extends JPanel implements Runnable{
      copyArrayList(simpieces, pieces);
  }
 
+ 
+ // Method to invoke user to choose color. The other color would be set for the computer 
+ public void chooseColor() {
+	 System.out.println("Please Choose Color: ");
+	 int userColor = scan.nextInt();
+	 if(userColor == 1) {
+		 currentColor = WHITE;
+		 compColor = BLACK;
+	 }else {
+		 compColor = WHITE;
+		 currentColor = BLACK;
+	 }
+ }
+ 
+ // selecting the mode of play
+ public void selectMode(){
+	 int mode;
+	 System.out.println("Please choose mode 1 for pVp 0 for pVc: ");
+//	 Scanner scan = new Scanner(System.in);
+	 
+	 mode = scan.nextInt();
+	 
+	 switch(mode) {
+	 case 0: this.MODE = PVsC; break;
+	 case 1: this.MODE = PVsP; break;
+	 }
+//	 scan.close();
+ }
+ 
  public void setPieces(){
 
      // ! White Pieces
@@ -74,14 +120,17 @@ public class PanelGame extends JPanel implements Runnable{
      pieces.add(new Pawn(WHITE, 6, 5));
      pieces.add(new Pawn(WHITE, 6, 6));
      pieces.add(new Pawn(WHITE, 6, 7));
-     pieces.add(new Rook(WHITE, 7, 7));
      pieces.add(new Rook(WHITE, 7, 0));
-//     pieces.add(new Bishop(WHITE, 7, 2));
-//     pieces.add(new Bishop(WHITE, 7, 5));
-//     pieces.add(new Knight(WHITE, 7, 1));
-//     pieces.add(new Knight(WHITE, 7, 6));
+     pieces.add(new Knight(WHITE, 7, 1));
+     pieces.add(new Bishop(WHITE, 7, 2));
+     pieces.add(new Queen(WHITE, 7, 3));
      pieces.add(new King(WHITE, 7, 4));
-//     pieces.add(new Queen(WHITE, 7, 3));
+     pieces.add(new Bishop(WHITE, 7, 5));
+     pieces.add(new Knight(WHITE, 7, 6));
+     pieces.add(new Rook(WHITE, 7, 7));
+
+
+
      
      // ! Black Pieces
      pieces.add(new Pawn(BLACK, 1, 0));
@@ -115,8 +164,13 @@ public class PanelGame extends JPanel implements Runnable{
 
  public void launchGame(){
      gamThread = new Thread(this); 
+     selectMode();
+     if(MODE == PVsC)
+    	 chooseColor();  // Prompt the user to choose color
+    
      gamThread.start(); // ? this methods invokes the run method being implemented from Runnable
- }
+     
+      }
 
  @Override
  public void run(){ // ? This method is used to make a game loop
@@ -141,7 +195,10 @@ public class PanelGame extends JPanel implements Runnable{
  }
 
  public void update(){
+//	 if(currentColor != compColor) 
 	 
+	 if(MODE == PVsP || (MODE == PVsC && currentColor != compColor)){
+		 
 	 if (promotion) {
 		 promoting();
 	 }else if(!gameOver && !stalemate){
@@ -196,7 +253,26 @@ public class PanelGame extends JPanel implements Runnable{
 			 }
 		 }
 	 }
+
+	 } // if bracket of currentColor != compColor
+	 else {
+		  ComputerTurn(); // Computer's Turn
+	 }
 }
+// if(MODE == PVsC && currentColor != compColor)
+ public void ComputerTurn() {
+	 
+	 Comp.choosePiece();     //calling computer to make a move
+	 compPiece = Comp.Cpiece(); // getting the computer's active piece
+	 compSimulate();
+	 
+	 copyArrayList(pieces, simpieces);
+	 
+	 compPiece.updatePosition();
+	 kingInCheck();
+	 
+	 changePlayer();
+ }
  
 private ChessPieces getKing(boolean opponent) {
 	ChessPieces king = null;
@@ -230,15 +306,31 @@ public boolean opponentCanCaptureKing(){
  // check checkmate method
  public boolean kingInCheck(){
 	 ChessPieces king = getKing(true); // passing true to get the opponent king
-	 
-	 if(activePiece.canMove(king.col, king.row)) { // if the active piece can move to the kings position then the piece is checking piece
-		 checkingP = activePiece;
-		 return true;
-	 }else {
-		 checkingP = null;
+
+	 if(MODE == PVsP || (MODE == PVsC && currentColor != compColor)) {
+	
+		 if(activePiece.canMove(king.col, king.row)) { 
+
+			 checkingP = activePiece;
+
+			 return true;
+		
+		 }
+		 
+	 }else if(MODE == PVsC) {
+
+		 
+		 if(compPiece.canMove(king.col, king.row)) { 
+ 
+			 checkingP = compPiece;
+		 
+			 return true;
+		
+		 }
 	 }
-	 return false;
- }
+		 checkingP = null;
+		 return false;
+	}
  
  
  // promoting method
@@ -266,10 +358,54 @@ public void promoting(){
 }
  
  
+public void compSimulate() {
+	
+	canMove = false;
+	 validSquare = false;
+	 
+//	 // copying the backup pieces to the array list so that the pieces dont disappear when the player hovers the active piece over the pieces
+//	 copyArrayList(simpieces, pieces);
+//	 
+	 
+	 // Reset castling position
+	 if(castlingPiece != null) {
+		 castlingPiece.col = castlingPiece.precol;
+		 castlingPiece.x = castlingPiece.getX(castlingPiece.col);
+		 castlingPiece = null;
+		 
+	 }
+	 
+	 
+	 // updating the position of the piece according to the mouse movements
+	 compPiece.x = compPiece.getX(Comp.targetCol); 
+	 compPiece.y = compPiece.getY(Comp.targetRow);
+	 
+	 compPiece.col = compPiece.getCol(compPiece.x);
+	 compPiece.row = compPiece.getRow(compPiece.y);
+	 
+	 if(compPiece.canMove(compPiece.col, compPiece.row)) {
+		 
+		 canMove = true;
+	 
+	 if(compPiece.hittingPiece != null) {
+		 simpieces.remove(compPiece.hittingPiece.getIndex());
+	 }
+	 
+	 checkCastling();
+	 if(!illegalMove(compPiece) && !opponentCanCaptureKing())
+		 validSquare = true;
+	 
+	 	}
+	
+	
+}
+
 // responsible for the new position of the piece when dragged with the mouse
 // this function is active when mouse is pressed
  public void simulate() {
 	 
+	 if(activePiece != null) {
+		 
 	 canMove = false;
 	 validSquare = false;
 	 
@@ -304,7 +440,8 @@ public void promoting(){
 	 if(!illegalMove(activePiece) && !opponentCanCaptureKing())
 		 validSquare = true;
 	 
-	}
+	 	}
+	 }
  }
  
  
@@ -333,13 +470,13 @@ public void promoting(){
 	 for(ChessPieces P : simpieces) {
 		 if(P.color != currentColor) {
 			 count++;
-		 }
+		 }}
 		 if(count == 1) {	// if only 1 piece is left that is the king
 			 if(!kingCanMove(getKing(true))) { // check if the king can make a legal move
 				 return true;
 			 }
 		 }
-	 }
+	 
 	 return false;
  }
  
@@ -348,11 +485,11 @@ public void promoting(){
  public boolean isCheckMate() {
 	 
 	 // check mate is check  for up down and left right, diagonal and not for knight because it can't be blocked
-	 
-	 
+	
 	 ChessPieces king = getKing(true);
-	 
-	 if(kingCanMove(king)) {
+	 System.out.println("KING ISCHECKMATE: "+ king.col+" "+king.row);
+	 System.out.println("CHECKINGP ISCHECKMATE: "+ checkingP.col+" "+checkingP.row);
+	 if(kingCanMove(king) || checkingP ==null) {
 		 return false;
 	 }else {
 		 // if the king can't move and is in the check position then still we got another chance
@@ -435,19 +572,25 @@ public void promoting(){
 			 
 			 // lower
 			 if(checkingP.row > king.row) {
-				 
+				 System.out.println("IN CHECK: ");
 				 // lower left
 				 if(checkingP.col < king.col) {
-					 for(int col = checkingP.col, row = checkingP.row; col > king.col; col++, row--) {
+					 System.out.println("IN CHECK: 02");
+					 for(int col = checkingP.col, row = checkingP.row; col < king.col; col++, row--) {
+						 System.out.println("IN CHECK: 2.1 "+col +" "+row);
 						 for(ChessPieces P : simpieces) {
-							 if(P != king && P.color != currentColor && P.canMove(col, row))
+							 System.out.println("IN CHECK: 03 "+ P +" "+ P.color+ " "+P.col +" "+P.row);
+							 if(P != king && P.color != checkingP.color && P.canMove(col, row)) {
+								
 								 return false;
+							 }
+								 
 						 }
 					 }
 				 }
 				 // lower right
 				 if(checkingP.col > king.col) {
-					 for(int col = checkingP.col, row = checkingP.row; col < king.col; col--, row--) {
+					 for(int col = checkingP.col, row = checkingP.row; col > king.col; col--, row--) {
 						 for(ChessPieces P : simpieces) {
 							 if(P != king && P.color != currentColor && P.canMove(col, row))
 								 return false;
@@ -530,7 +673,6 @@ public void promoting(){
 	 
 	 // the turn is changed by switching the color
 	 if(currentColor == WHITE) {
-		 
 		 currentColor = BLACK;
 		 for(ChessPieces P: PanelGame.simpieces) {
 			 if(P.color == BLACK)
@@ -549,8 +691,11 @@ public void promoting(){
 		 for(ChessPieces P: PanelGame.simpieces) {
 			 if(P.color == WHITE)
 				 P.twostepped = false;
-		 }
+		 }System.out.println();
 	 }
+//	 if(currentColor == compColor) {
+//		 Comp.choosePiece(); // Computer move intiated from here
+//	 }
 	 activePiece = null;
  }
  
@@ -626,13 +771,13 @@ public void promoting(){
      if(gameOver) {
     	 g2.setColor(Color.GREEN);
     	 String gameOverMsg = (currentColor == WHITE) ?  "White Wins" : "Black Wins"; 
-    	 g2.drawString(gameOverMsg, 750, 180);
+    	 g2.drawString(gameOverMsg, 750, 190);
      }
      
      if(stalemate) {
     	 g2.setColor(Color.GREEN);
     	 String gameOverMsg = "It's a Draw! Stalemate"; 
-    	 g2.drawString(gameOverMsg, 750, 180);
+    	 g2.drawString(gameOverMsg, 700, 200);
      }
      
       }

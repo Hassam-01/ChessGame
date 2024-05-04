@@ -17,6 +17,8 @@ public class Pawn extends ChessPieces{
             image = getImage("/piece/b-pawn");            
         }
     }
+    
+    
     public boolean canMove(int targetCol, int targetRow) {
     	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
     		
@@ -54,6 +56,34 @@ public class Pawn extends ChessPieces{
     			}
     			
     		}
+    	}
+    	
+    	return false;
+    }
+    
+    public boolean canMove(int targetCol, int targetRow, int value) {
+    	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
+    		
+    		int moveValue = 0;
+    		
+    		if(PanelGame.compColor == PanelGame.WHITE)
+    			moveValue = 1;
+    		if(PanelGame.compColor == PanelGame.BLACK)
+    			moveValue = -1;
+	
+    		if(Math.abs(targetCol-precol) == 1 && targetRow == prerow + moveValue )
+    			return true;
+    	
+    		// En passant
+//    		if(Math.abs(targetCol-precol) == 1 && targetRow == prerow + moveValue ) {
+//    			for(ChessPieces P: PanelGame.simpieces) {
+//    				if(P.col == targetCol && P.row == prerow && P.twostepped == true) {
+//    					hittingPiece = P;
+//    					return true;
+//    				}
+//    			}
+//    			
+//    		}
     	}
     	
     	return false;

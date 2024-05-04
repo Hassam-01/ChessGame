@@ -72,6 +72,19 @@ public class King extends ChessPieces{
     	}
     	return false;
     }
+    
+    
+public boolean canMove(int targetCol, int targetRow, int a) {
+    	
+    	if(withInBoard(targetCol, targetRow)){
+    		
+    		if((Math.abs(targetRow - prerow) + (Math.abs(targetCol - precol)) == 1) ||
+    				(Math.abs(targetRow - prerow) * (Math.abs(targetCol - precol)) == 1)){
+    					return true;
+    		}
+    	}
+    	return false;
+    }
 }
     
     
