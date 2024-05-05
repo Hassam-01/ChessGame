@@ -112,22 +112,22 @@ Scanner scan = new Scanner(System.in);
  public void setPieces(){
 
      // ! White Pieces
-     pieces.add(new Pawn(WHITE, 6, 0));
-     pieces.add(new Pawn(WHITE, 6, 1));
-     pieces.add(new Pawn(WHITE, 6, 2));
-     pieces.add(new Pawn(WHITE, 6, 3));
-     pieces.add(new Pawn(WHITE, 6, 4));
-     pieces.add(new Pawn(WHITE, 6, 5));
-     pieces.add(new Pawn(WHITE, 6, 6));
-     pieces.add(new Pawn(WHITE, 6, 7));
-     pieces.add(new Rook(WHITE, 7, 0));
-     pieces.add(new Knight(WHITE, 7, 1));
-     pieces.add(new Bishop(WHITE, 7, 2));
+//     pieces.add(new Pawn(WHITE, 6, 0));
+//     pieces.add(new Pawn(WHITE, 6, 1));
+//     pieces.add(new Pawn(WHITE, 6, 2));
+//     pieces.add(new Pawn(WHITE, 6, 3));
+//     pieces.add(new Pawn(WHITE, 6, 4));
+//     pieces.add(new Pawn(WHITE, 6, 5));
+//     pieces.add(new Pawn(WHITE, 6, 6));
+//     pieces.add(new Pawn(WHITE, 6, 7));
+//     pieces.add(new Rook(WHITE, 7, 0));
+//     pieces.add(new Knight(WHITE, 7, 1));
+//     pieces.add(new Bishop(WHITE, 7, 2));
      pieces.add(new Queen(WHITE, 7, 3));
      pieces.add(new King(WHITE, 7, 4));
-     pieces.add(new Bishop(WHITE, 7, 5));
-     pieces.add(new Knight(WHITE, 7, 6));
-     pieces.add(new Rook(WHITE, 7, 7));
+//     pieces.add(new Bishop(WHITE, 7, 5));
+//     pieces.add(new Knight(WHITE, 7, 6));
+//     pieces.add(new Rook(WHITE, 7, 7));
 
 
 
@@ -143,12 +143,12 @@ Scanner scan = new Scanner(System.in);
      pieces.add(new Pawn(BLACK, 1, 7));
      pieces.add(new Rook(BLACK, 0, 7));
      pieces.add(new Rook(BLACK, 0, 0));
-     pieces.add(new Bishop(BLACK, 0, 2));
-     pieces.add(new Bishop(BLACK, 0, 5));
-     pieces.add(new Knight(BLACK, 0, 1));
-     pieces.add(new Knight(BLACK, 0, 6));
+//     pieces.add(new Bishop(BLACK, 0, 2));
+//     pieces.add(new Bishop(BLACK, 0, 5));
+//     pieces.add(new Knight(BLACK, 0, 1));
+//     pieces.add(new Knight(BLACK, 0, 6));
      pieces.add(new King(BLACK, 0, 4));
-     pieces.add(new Queen(BLACK, 0, 3));
+//     pieces.add(new Queen(BLACK, 0, 3));
  
  }
 
@@ -162,6 +162,17 @@ Scanner scan = new Scanner(System.in);
 
  }
 
+ public static void copyArrayListComp(ArrayList<ChessPieces> target, ArrayList<ChessPieces> source){
+     // ! Clearing if any null or unnecessary item in the target
+     target.clear();
+
+     for (int i=0; i<source.size(); i++){
+         target.add(source.get(i)); // ! copying source to target
+     }
+
+ }
+ 
+ 
  public void launchGame(){
      gamThread = new Thread(this); 
      selectMode();

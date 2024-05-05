@@ -32,6 +32,7 @@ import piece.Rook;
 // promotion of pieces
 // king save it self -- done 
 // queen jumps to 7 2- 
+// bug in the points
 public class Computer {
 
 	public int targetCol, targetRow; // the target row and column where the computer piece can move
@@ -110,7 +111,19 @@ public class Computer {
 			return true;
 		return false;
 	}
-
+	
+	public void PawnPromotion(ChessPieces P){
+		if(P instanceof Pawn) {
+			if(PanelGame.compColor  == PanelGame.WHITE && P.row == 7 ||
+					(PanelGame.compColor == PanelGame.BLACK && P.row == 0)) {
+				
+				PanelGame.simpieces.add(new Queen(PanelGame.compColor, P.row, P.col));
+				PanelGame.simpieces.remove(P.getIndex());
+				PanelGame.copyArrayListComp(PanelGame.pieces, PanelGame.simpieces);
+				
+			}
+		}
+	}
 	public void saveKing() {
 		// Iterate through all pieces of the defending color
 		boolean checkCapture = false, checkBlock = false;
@@ -237,6 +250,8 @@ public class Computer {
 
 					cActiveP.col = bestMove.bestCol;
 					cActiveP.row = bestMove.bestRow;
+					
+					PawnPromotion(cActiveP);
 					System.out.println(bestMove.moveRating);
 
 				}
