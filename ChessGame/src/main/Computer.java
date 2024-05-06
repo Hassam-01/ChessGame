@@ -114,11 +114,12 @@ public class Computer {
 	
 	public void PawnPromotion(ChessPieces P){
 		if(P instanceof Pawn) {
-			if(PanelGame.compColor  == PanelGame.WHITE && P.row == 7 ||
-					(PanelGame.compColor == PanelGame.BLACK && P.row == 0)) {
+			if(PanelGame.compColor  == PanelGame.WHITE && P.row == 0 ||
+					(PanelGame.compColor == PanelGame.BLACK && P.row == 7)) {
 				
-				PanelGame.simpieces.add(new Queen(PanelGame.compColor, P.row, P.col));
 				PanelGame.simpieces.remove(P.getIndex());
+				PanelGame.simpieces.add(new Queen(PanelGame.compColor, P.row, P.col));
+				
 				PanelGame.copyArrayListComp(PanelGame.pieces, PanelGame.simpieces);
 				
 			}
@@ -159,13 +160,11 @@ public class Computer {
 			if (P2.color == PanelGame.compColor && !checkCapture) {
 				// Check if the piece can block the check
 				// a knight's check can't be blocked
-				System.out.println("Entering second if to block");
 				if (!(checkingP instanceof Knight) && !(P2 instanceof King)) {
 					// Determine the direction of the check
 
 					int dCol = Integer.compare(checkingP.col, kingCol);
 					int dRow = Integer.compare(checkingP.row, kingRow);
-					System.out.println("dCol:  " + dCol + " dRow:  " + dRow);
 
 					// Check positions between the checking piece and the king
 					for (int col = kingCol + dCol, row = kingRow + dRow; col != checkingP.col
@@ -176,11 +175,8 @@ public class Computer {
 							// Add blocking move to the list of moves
 							bestMoves saveKingP = new bestMoves(P2.getIndex(), col, row, P2.col, P2.row, 0, P2);
 
-							System.out.println("Calling from inner loop save king");
 							saveKingP.moveRating = tradeValue(saveKingP);
-							System.out.println(saveKingP.piece + " " + saveKingP.bestCol + " " + saveKingP.bestRow
-									+ " KING IN CHECK SAVE KING FUCNTION");
-							checkMoves.add(saveKingP);
+
 							checkBlock = true;
 						}
 					}
@@ -209,10 +205,6 @@ public class Computer {
 					}
 				}
 			}
-		}
-
-		for (bestMoves BM : checkMoves) {
-			System.out.println(BM.piece + " " + BM.bestCol + " " + BM.bestRow + " KING IN CHECK SAVE KING FUCNTION");
 		}
 
 		decideTheMove(checkMoves);
@@ -251,11 +243,11 @@ public class Computer {
 					cActiveP.col = bestMove.bestCol;
 					cActiveP.row = bestMove.bestRow;
 					
-					PawnPromotion(cActiveP);
 					System.out.println(bestMove.moveRating);
 
 				}
 			}
+			PawnPromotion(cActiveP);
 
 			reset(); // reset method called to reset the bestMove after a move is played
 
@@ -267,7 +259,6 @@ public class Computer {
 //		bestMoves bestMove = null;
 		if (checkKingInCheck()) {
 			// try to kill the checking piece highest priority
-			System.out.println("KING IN CHECK NO MOVE SHOULD BE MADE!!!");
 			validMoves.clear();
 			saveKing();
 			// check if the piece can capture the checking piece
