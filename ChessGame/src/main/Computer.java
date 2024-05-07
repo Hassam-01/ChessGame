@@ -820,7 +820,7 @@ public class Computer {
 
 	public void Pause(){
 		try {
-			Thread.sleep(1000); // Pause for 1 second
+			Thread.sleep(500); // Pause for 1 second
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
