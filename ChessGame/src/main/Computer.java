@@ -96,11 +96,11 @@ public class Computer {
 	}
 
 	public ChessPieces Cpiece() {
-		
-		
 		checkedPieces.clear();
 		System.out.println(cActiveP + " Col: "+ cActiveP.col + " Row: "+cActiveP.row);
 		PanelGame.copyArrayListComp(PanelGame.pieces, PanelGame.simpieces);
+
+		Pause();
 		return cActiveP;
 	}
 
@@ -818,4 +818,11 @@ public class Computer {
 		return pieceValue;
 	}
 
+	public void Pause(){
+		try {
+			Thread.sleep(1000); // Pause for 1 second
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -34,11 +34,9 @@ public class Bishop extends ChessPieces{
     	if(withInBoard(targetCol, targetRow) && !ownSquare(targetCol, targetRow)) {
     		
     		if(Math.abs(targetCol - precol) == Math.abs(targetRow - prerow)) {
-    			if(!pieceOnDiognal(targetCol, targetRow))
-    			return true;
+                return !pieceOnDiognal(targetCol, targetRow);
     		}
     	}
-    	
     	return false;
     }
     
