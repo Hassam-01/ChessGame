@@ -226,7 +226,7 @@ public class Computer {
 			}
 		}
 	}
-	if(1==1);
+	
 	
 		if(!checkBlock && !checkCapture) {
 			System.out.println("Enteering king move ");
