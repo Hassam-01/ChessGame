@@ -225,9 +225,7 @@ public class Computer {
 				}
 			}
 		}
-	}
-	if(1==1);
-	
+	}	
 		if(!checkBlock && !checkCapture) {
 			System.out.println("Enteering king move ");
 
@@ -271,10 +269,12 @@ public class Computer {
 
 			for (int i = 0; i < moves.size() - 1; i++) {
 
-				if (bestMove.moveRating >= moves.get(i + 1).moveRating) {
+				if (bestMove.moveRating > moves.get(i + 1).moveRating) {
+
 					continue;
 				} else
 					bestMove = moves.get(i + 1);
+
 			}
 			// locating the choosen piece on the board and setting it as Active
 			for (ChessPieces p : PanelGame.simpieces) {
@@ -287,7 +287,7 @@ public class Computer {
 
 					targetCol = bestMove.bestCol;
 					targetRow = bestMove.bestRow;
-
+										
 					cActiveP.col = bestMove.bestCol;
 					cActiveP.row = bestMove.bestRow;
 					
@@ -324,7 +324,9 @@ public class Computer {
 //					continue;
 		} else if (isValid && !checkKingInCheck()) { // make a move only if there are valid moves
 			System.out.println("If king check NOT");
-
+			for(bestMoves BM: validMoves) {
+				System.out.println(BM.piece + " "+BM.bestCol +" " + BM.bestRow +" "+ BM.moveRating);
+			}
 			decideTheMove(validMoves);
 
 		}
@@ -651,7 +653,12 @@ public class Computer {
 	// returns a double value, which is the difference between the computer piece
 	// value and opponent piece value
 	public double tradeValue(bestMoves Piece) {
-
+		
+		
+		boolean selfCaptured = false; // check if computers piece is being captured
+		boolean underAttack = false; // check if computers piece is under threat
+		boolean capturePlayerPiece = false; // check is can capture players piece
+		
 		double compPieceValue = getPieceValue(Piece.piece);
 		double oppPieceValue = getPieceValue(hitPiece);
 		double tradeValue = 0;
@@ -660,8 +667,10 @@ public class Computer {
 		// we must check for all pieces
 		// except the piece we assume to be captured
 
-		if (hittingPiece(Piece))
+		if (hittingPiece(Piece)) {
 			tradeValue += oppPieceValue;
+			capturePlayerPiece = true;
+		}
 
 		// receives an object from the class type bestmoves
 		// gets the piece from the class and finds the difference
@@ -688,6 +697,7 @@ public class Computer {
 						System.out.println(tradeValue + " pawn before" + Piece.bestCol + " " + Piece.bestRow);
 
 						tradeValue -= compPieceValue;
+						selfCaptured = true;
 						System.out.println(tradeValue + " pawn after");
 					}
 				} else if (!(P instanceof Pawn) && P.canMove(Piece.bestCol, Piece.bestRow, 1)) {
@@ -696,6 +706,7 @@ public class Computer {
 					System.out.println(tradeValue + " piece before " + Piece.bestCol + " " + Piece.bestRow);
 
 					tradeValue -= compPieceValue;
+					selfCaptured = true;
 					System.out.println(tradeValue + " piece after");
 				}
 
@@ -748,6 +759,7 @@ public class Computer {
 							if (!pi2.canMove(Piece.bestCol, Piece.bestRow,true)) {
 								System.out.println(tradeValue + " self taken");
 								tradeValue += getPieceValue(Piece.piece);
+								underAttack = true;
 								break;
 							}
 						}
@@ -755,6 +767,13 @@ public class Computer {
 				}
 			}
 		}
+		
+		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured && !underAttack && !capturePlayerPiece)
+			{
+			tradeValue += 5;
+			System.out.println(" From Check: "+ tradeValue);
+
+			}
 
 		System.out.println(tradeValue + " exit staus value");
 		return tradeValue;
@@ -801,7 +820,55 @@ public class Computer {
 		return 0;
 	}
 
+	
+	// method to get the players king
+	private ChessPieces getPlayerKing() {
+	
+		// getting the player's king can help in determining if the comp piece is in a position to make a check
+		
+		ChessPieces playerKing = null;
+		for(ChessPieces P: PanelGame.simpieces) {
+			if(P.color != PanelGame.compColor && P.type == Type.KING) {
+				return playerKing;
+			}
+		}
+		
+		return playerKing;
+	}
+	
+	private boolean canCheckKing(ChessPieces piece, int targetCol, int targetRow) {
+		
+		// this method will be used to make the piece make a move closer to the king to make a check
+		
+		int tempRow = piece.prerow;
+		int tempCol = piece.precol;
+		// to check for if the piece can check a king we need look for the piece's attacking line if
+		// the king comes under the attacking line of the piece after making the move then
+		// canCheckKing must return true
+		
+		// we will update the position of the piece temporarily and then reset after verifying check
+		ChessPieces playerKing =  getPlayerKing();
+		if(playerKing != null) {
+			piece.precol = targetCol;
+			piece.prerow = targetRow;
+			if(piece.canMove(playerKing.col, playerKing.row)) {
+				piece.precol = tempCol; // resetting the col and row of the piece
+				piece.prerow = tempRow;
+				return true;
+			}
+				
+		}
+		piece.precol = tempCol; // resetting the col and row before returning
+		piece.prerow = tempRow;
+		return false;
+	}
+	
+	
+	// method to return the piece value 
 	public int getPieceValue(ChessPieces Piece) {
+		// the value of piece hold high importance in out algorithm because all the moves are determined by it
+		// the algorithm encourages positive tradeValue moves which are determined using piece value
+		
 		int pieceValue = 0;
 
 		if (Piece instanceof Pawn) {
@@ -818,6 +885,8 @@ public class Computer {
 		return pieceValue;
 	}
 
+	
+	
 	public void Pause(){
 		try {
 			Thread.sleep(500); // Pause for 1 second

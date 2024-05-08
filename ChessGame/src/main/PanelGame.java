@@ -272,16 +272,16 @@ Scanner scan = new Scanner(System.in);
 }
 // if(MODE == PVsC && currentColor != compColor)
  public void ComputerTurn() {
-	 
 	 Comp.choosePiece();     //calling computer to make a move
 	 compPiece = Comp.Cpiece(); // getting the computer's active piece
+
 	 compSimulate();
-	 
+
 	 copyArrayList(pieces, simpieces);
-	 
+
 	 compPiece.updatePosition();
+
 	 kingInCheck();
-	 
 	 changePlayer();
  }
  
@@ -379,35 +379,34 @@ public void compSimulate() {
 //	 
 	 
 	 // Reset castling position
-	 if(castlingPiece != null) {
-		 castlingPiece.col = castlingPiece.precol;
-		 castlingPiece.x = castlingPiece.getX(castlingPiece.col);
-		 castlingPiece = null;
-		 
-	 }
+//	 if(castlingPiece != null) {
+//		 castlingPiece.col = castlingPiece.precol;
+//		 castlingPiece.x = castlingPiece.getX(castlingPiece.col);
+//		 castlingPiece = null;
+//		 
+//	 }
 	 
 	 
 	 // updating the position of the piece according to the mouse movements
-	 compPiece.x = compPiece.getX(Comp.targetCol); 
-	 compPiece.y = compPiece.getY(Comp.targetRow);
-	 
+	 compPiece.x = compPiece.getX(compPiece.col);
+	 compPiece.y = compPiece.getY(compPiece.row);
+
 	 compPiece.col = compPiece.getCol(compPiece.x);
 	 compPiece.row = compPiece.getRow(compPiece.y);
-	 
-	 if(compPiece.canMove(compPiece.col, compPiece.row)) {
-		 
+
+//	 if(compPiece.canMove(compPiece.col, compPiece.row)) {
+//		 
 		 canMove = true;
 	 
 	 if(compPiece.hittingPiece != null) {
 		 simpieces.remove(compPiece.hittingPiece.getIndex());
 	 }
 	 
-	 checkCastling();
+//	 checkCastling();
 	 if(!illegalMove(compPiece) && !opponentCanCaptureKing())
 		 validSquare = true;
 	 
-	 	}
-	
+//	 	}
 	
 }
 
