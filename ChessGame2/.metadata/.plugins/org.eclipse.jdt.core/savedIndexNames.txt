@@ -1,0 +1,1 @@
+INDEX VERSION 1.134+C:\Users\Hassam Ali\git\repository\ChessGame\.metadata\.plugins\org.eclipse.jdt.core
