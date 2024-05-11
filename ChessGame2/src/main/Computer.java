@@ -821,12 +821,12 @@ public class Computer {
 			}
 		}
 		
-		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured && !underAttack && !capturePlayerPiece && !anyPieceInThreat())
-			{
-			tradeValue += 5;
-			System.out.println(" From Check: "+ tradeValue);
-
-			}
+//		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured && !underAttack && !capturePlayerPiece && !anyPieceInThreat())
+//			{
+//			tradeValue += 5;
+//			System.out.println(" From Check: "+ tradeValue);
+//
+//			}
 
 		System.out.println(tradeValue + " exit staus value");
 		return tradeValue;
