@@ -20,9 +20,9 @@ import piece.Rook;
 
 // PROBS:
 // moves of comp skipped
-// king moves not proper
-// pawn canCheckking not working
-// repeated moves
+// king moves not proper -- done
+// pawn canCheckking not working 
+// repeated moves -- done
 
 // pawn on the center are worth more than the pawns at the ends
 // a pair of bishop is more valuable than knight
@@ -34,11 +34,11 @@ import piece.Rook;
 // and if the piece is under attack the piece must try to save it self -- done
 // debug king in check -- done
 // check when the opponent is in check 
-// repeated moves
-// promotion of pieces
+// repeated moves -- done
+// promotion of pieces --done 
 // king save it self -- done 
-// queen jumps to 7 2- 
-// bug in the points
+// queen jumps to 7 2- done
+// bug in the points -- done
 public class Computer {
 
 	public int targetCol, targetRow; // the target row and column where the computer piece can move
@@ -65,12 +65,19 @@ public class Computer {
 
 	ArrayList<bestMoves> validMoves = new ArrayList<>(); // this will store the best moves of each piece available
 	ArrayList<bestMoves> checkMoves = new ArrayList<>();
-
+	ArrayList<bestMoves>  history = new ArrayList<>();
 	ChessPieces cActiveP; // Computers Active Piece which will be moved
 
 	public void choosePiece() {
 		// Choosing a piece
-
+		cActiveP = null;
+		for (ChessPieces P : PanelGame.simpieces) {
+			if (P.color == PanelGame.compColor) {
+				// when piece found setting it as active
+				System.out.println("Piece from Choose Piece: "+ P+ " "+ P.col+" "+P.row);
+			}
+		
+		}
 		for (ChessPieces P : PanelGame.simpieces) {
 			isValid = false;
 			if (P.color == PanelGame.compColor && !checkedPieces.contains(P)) {
@@ -94,6 +101,8 @@ public class Computer {
 			} else if (cActiveP instanceof Rook) {
 				cRook();
 			}
+			
+			
 
 		}
 
@@ -140,7 +149,8 @@ public class Computer {
 	public void saveKing() {
 		// Iterate through all pieces of the defending color
 		System.out.println("Entered saveKing");
-
+		boolean checkKingDanger = false;
+		
 		boolean checkCapture = false, checkBlock = false;
 
 		for (ChessPieces P : PanelGame.simpieces) {
@@ -148,17 +158,17 @@ public class Computer {
 				if (P.canMove(checkingP.col, checkingP.row)) {// checking if a piece can capture the checking piece
 					if (P instanceof King) {
 						for (ChessPieces Pk : PanelGame.simpieces) {
-							if (Pk.color != P.color && !Pk.canMove(checkingP.col, checkingP.row, true)) {
-								bestMoves saveKingP = new bestMoves(P.getIndex(), checkingP.col, checkingP.row, P.col,
-										P.row, 0, P);
+							if (Pk.color != P.color && !Pk.canMove(checkingP.col, checkingP.row, true)) 
+								checkKingDanger = true;
+						}
+						if(!checkKingDanger){
+							bestMoves saveKingP = new bestMoves(P.getIndex(), checkingP.col, checkingP.row, P.col,
+									P.row, 0, P);
 
-								saveKingP.moveRating = tradeValue(saveKingP);
+							saveKingP.moveRating = tradeValue(saveKingP);
 
-								checkMoves.add(saveKingP);
-								checkCapture = true;
-//								System.out.println("Check capture "+ checkCapture);
-
-							}
+							checkMoves.add(saveKingP);
+							checkCapture = true;
 						}
 					}else {
 						
@@ -199,8 +209,8 @@ public class Computer {
 					case DOWN:  dCol = 0; dRow = 1;    break;
 					case LEFT:  dCol = 1; dRow = 0;    break;
 					case RIGHT:  dCol = -1; dRow = 0;    break;
-					case UPRIGHT:  dCol = -1; dRow = 1;    break;
-					case UPLEFT:  dCol = 1; dRow = 1;    break;
+					case UPRIGHT:  dCol = 1; dRow = -1;    break;
+					case UPLEFT:  dCol = -1; dRow = -1;    break;
 					case DOWNRIGHT:  dCol = -1; dRow = -1;    break;
 					case DOWNLEFT:  dCol = 1; dRow = -1;    break;
 					}
@@ -241,7 +251,7 @@ public class Computer {
 			if (P3.color == PanelGame.compColor) {
 				if (P3 instanceof King) {
 					int direction[][] = { { 1, 1 }, { 0, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }, { 0, -1 }, { -1, 0 },
-							{ -1, 1 } };
+							{ 1, 0 } };
 					for (int dir[] : direction) {
 						boolean danger = false;
 						int col = P3.col + dir[0];
@@ -271,7 +281,14 @@ public class Computer {
 	}
 
 	private void decideTheMove(ArrayList<bestMoves> moves) {
-
+		
+//		for(bestMoves BM: moves) {
+//			System.out.println("Best Moves from decide: "+BM.piece +" "+BM.bestCol+" "+BM.bestRow);
+//		}
+		
+		
+		System.out.println("Entered Decide move: ");
+		history.clear();
 		if (staleMate() || checkMate()) {
 			System.out.println("Stale Mate or check mate");
 			PanelGame.compLose = true;
@@ -279,6 +296,7 @@ public class Computer {
 		}
 
 		else {
+			System.out.println("Entered Else: 01 ");
 			bestMoves bestMove = null;
 
 			bestMove = moves.get(0); // setting the first object in valid Move array as best move piece
@@ -294,11 +312,12 @@ public class Computer {
 			}
 			// locating the choosen piece on the board and setting it as Active
 			for (ChessPieces p : PanelGame.simpieces) {
+//				System.out.println("Entered if 01: "+ bestMove.piece+" "+ bestMove.bestCol+" "+ bestMove.bestRow);
 
 				if (p == bestMove.piece && p.getIndex() == bestMove.index
 						&& p.canMove(bestMove.bestCol, bestMove.bestRow)
 						&& PanelGame.simpieces.contains(bestMove.piece)) {
-
+					System.out.println("Entered if 02: "+ bestMove.piece+" "+ bestMove.bestCol+" "+ bestMove.bestRow);
 					cActiveP = bestMove.piece;
 
 					targetCol = bestMove.bestCol;
@@ -307,8 +326,11 @@ public class Computer {
 					cActiveP.col = bestMove.bestCol;
 					cActiveP.row = bestMove.bestRow;
 					
+					history.add(bestMove);
+					
 					System.out.println(bestMove.moveRating);
-
+					
+					
 				}
 			}
 			PawnPromotion(cActiveP);
@@ -359,7 +381,15 @@ public class Computer {
 
 		targetCol = cActiveP.col;
 		targetRow = cActiveP.row + 1;
-
+		
+		System.out.println("PAWN PIECE FROM PAWN"+ cActiveP + cActiveP.col +" "+ cActiveP.row);
+		for (ChessPieces P : PanelGame.simpieces) {
+			if (P.color == PanelGame.compColor) {
+				// when piece found setting it as active
+				System.out.println("Piece from Choose Piece: "+ P+ " "+ P.col+" "+P.row);
+			}
+		
+		}
 		if (cActiveP.canMove(targetCol, targetRow)) {
 			validMovesCount++;
 
@@ -827,7 +857,15 @@ public class Computer {
 //			System.out.println(" From Check: "+ tradeValue);
 //
 //			}
+		try {
 
+		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece)
+//			if(history.get(0).activeCol == Piece.bestCol && history.get(0).activeRow == Piece.bestRow)
+				{
+				tradeValue -= 3;
+				
+				}
+		}catch(Exception e) {}
 		System.out.println(tradeValue + " exit staus value");
 		return tradeValue;
 		}else
