@@ -807,7 +807,7 @@ public class Computer {
 					// Find if any opponent piece can capture the activeP of comp
 					if (P2.color != PanelGame.compColor && P2.canMove(Piece.activeCol, Piece.activeRow)) { 
 						
-						System.out.println("Opponent Piece " + P2);
+//						System.out.println("Opponent Piece " + P2);
 						for (ChessPieces P3 : PanelGame.simpieces) {
 							// Find if the opponent piece can capture any other except activeP
 
@@ -840,8 +840,8 @@ public class Computer {
 					for (ChessPieces pi2 : PanelGame.simpieces) {
 						if (pi2.color != PanelGame.compColor) {
 							if (!pi2.canMove(Piece.bestCol, Piece.bestRow,true)) {
-								System.out.println(tradeValue + " self taken");
 								tradeValue += getPieceValue(Piece.piece);
+								System.out.println(tradeValue + " self taken");
 								underAttack = true;
 								break;
 							}
@@ -860,6 +860,7 @@ public class Computer {
 		try {
 
 		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece)
+			System.out.println("Repeat move!");
 //			if(history.get(0).activeCol == Piece.bestCol && history.get(0).activeRow == Piece.bestRow)
 				{
 				tradeValue -= 3;
@@ -895,9 +896,9 @@ public class Computer {
 				return DOWN;
 		} else if (targetRow - P.row == 0) {
 			if (targetCol - P.col < 0)
-				return RIGHT;
+				return LEFT ;
 			else
-				return LEFT;
+				return RIGHT;
 		} else if (targetRow - P.row > 0) {
 			if (targetCol - P.col > 0)
 				return DOWNRIGHT;
