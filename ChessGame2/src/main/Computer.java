@@ -207,8 +207,8 @@ public class Computer {
 					switch(attackDir) {
 					case UP:  dCol = 0; dRow = -1;    break;
 					case DOWN:  dCol = 0; dRow = 1;    break;
-					case LEFT:  dCol = 1; dRow = 0;    break;
-					case RIGHT:  dCol = -1; dRow = 0;    break;
+					case LEFT:  dCol = -1; dRow = 0;    break;
+					case RIGHT:  dCol = 1; dRow = 0;    break;
 					case UPRIGHT:  dCol = 1; dRow = -1;    break;
 					case UPLEFT:  dCol = -1; dRow = -1;    break;
 					case DOWNRIGHT:  dCol = -1; dRow = -1;    break;

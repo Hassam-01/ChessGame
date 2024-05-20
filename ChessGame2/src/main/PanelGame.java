@@ -45,9 +45,10 @@ Scanner scan = new Scanner(System.in);
  public static final int PVsC = 0;
  public static final int PVsP = 1;
  public static int MODE;
- int currentColor;	// Color to check whose turn is it
- public static int compColor;   // color for the computer 
- 
+ public static int compColor;   // color for the computer
+ public static int UserColor;   // color for the computer
+ int currentColor = UserColor;	// Color to check whose turn is it
+
  // * Boolean values for the piece to move
  boolean canMove; 		// check if the piece is able to move
  boolean validSquare;	// check if the square is valid over which the active piece is hovering
@@ -61,7 +62,7 @@ Scanner scan = new Scanner(System.in);
  public static ArrayList<ChessPieces> simpieces = new ArrayList<>();
  // * pieces would be used for backup to reverse the moves the player made
  public static ArrayList<ChessPieces> pieces = new ArrayList<>();
- 
+
  // Array list to display piece that pawn can be promoted to
  ArrayList<ChessPieces> promoPiece = new ArrayList<>();
  
@@ -70,8 +71,10 @@ Scanner scan = new Scanner(System.in);
  
  
  // ! Constructor for PanelGame
- public PanelGame(){
-     setPreferredSize(new Dimension(WIDTH, HEIGHT)); // ? defining the size of the panel
+ public PanelGame(int MODE){
+
+	 PanelGame.MODE = MODE; // setting the mode
+	 setPreferredSize(new Dimension(WIDTH, HEIGHT)); // ? defining the size of the panel
      setBackground(Color.black); // ? setting the background as black
      addMouseMotionListener(mouse); // Adding mouse motion listener
      addMouseListener(mouse);
@@ -83,7 +86,7 @@ Scanner scan = new Scanner(System.in);
  
  // Method to invoke user to choose color. The other color would be set for the computer 
  public void chooseColor() {
-	 System.out.println("Please Choose Color: ");
+	 System.out.println("Please Choose Color: " );
 	 int userColor = scan.nextInt();
 	 if(userColor == 1) {
 		 currentColor = WHITE;
@@ -95,19 +98,19 @@ Scanner scan = new Scanner(System.in);
  }
  
  // selecting the mode of play
- public void selectMode(){
-	 int mode;
-	 System.out.println("Please choose mode 1 for pVp 0 for pVc: ");
-//	 Scanner scan = new Scanner(System.in);
-	 
-	 mode = scan.nextInt();
-	 
-	 switch(mode) {
-	 case 0: this.MODE = PVsC; break;
-	 case 1: this.MODE = PVsP; break;
-	 }
-//	 scan.close();
- }
+// public void selectMode(){
+//	 int mode;
+//	 System.out.println("Please choose mode 1 for pVp 0 for pVc: " + MODE);
+////	 Scanner scan = new Scanner(System.in);
+//
+////	 mode = scan.nextInt();
+//
+//	 switch(PanelGame.MODE) {
+//	 case 0: PanelGame.MODE = PVsC; break;
+//	 case 1: PanelGame.MODE = PVsP; break;
+//	 }
+////	 scan.close();
+// }
  
  public void setPieces(){
 
@@ -210,9 +213,9 @@ Scanner scan = new Scanner(System.in);
  
  public void launchGame(){
      gamThread = new Thread(this); 
-     selectMode();
-     if(MODE == PVsC)
-    	 chooseColor();  // Prompt the user to choose color
+//     selectMode();
+//     if(MODE == PVsC)
+//    	 chooseColor();  // Prompt the user to choose color
     
      gamThread.start(); // ? this methods invokes the run method being implemented from Runnable
      

@@ -10,24 +10,95 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URL;
 
 public class ChessSwingOpening {
     private Clip clip; // Declare Clip as an instance variable
-
+    private static JFrame frame;
     // Constructor
-    public ChessSwingOpening() {
-        // Create a JFrame
-        JFrame frame = new JFrame("Chess Interface");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    public static void setPanel(JFrame frame){
+        ChessSwingOpening.frame = frame;
+    }
+    public  ChessSwingOpening(JFrame frame) {
+
+        this.frame = frame;
+
+        this.frame.addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (Main.MODE == 0) {
+                    ColorSelect cs = new ColorSelect();
+                    cs.setVisible(true);
+                } else{
+                    JFrame window = new JFrame("Chess Mate AI");
+
+                    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // ? setting game close option
+                    window.setResizable(false); // ? Make resize false so can't be resized to avoid disruption in display
+
+                    PanelGame panel = new PanelGame(Main.MODE); // ? making an instance of Game panel
+                    window.add(panel); // ? Adding the panel to the window
+                    window.pack(); // ? adjusts the size according to the game panel
+
+                    window.setLocationRelativeTo(null); //*  null to make the window appear in the center
+                    window.setVisible(true);
+
+                    panel.launchGame();
+                }
+//                JFrame window = new JFrame("Chess Mate AI");
+//
+//                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // ? setting game close option
+//                window.setResizable(false); // ? Make resize false so can't be resized to avoid disruption in display
+//
+//                PanelGame panel = new PanelGame(Main.MODE); // ? making an instance of Game panel
+//                window.add(panel); // ? Adding the panel to the window
+//                window.pack(); // ? adjusts the size according to the game panel
+//
+//                window.setLocationRelativeTo(null); //*  null to make the window appear in the center
+//                window.setVisible(true);
+//
+//                panel.launchGame();
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
+            // Create a JFrame
+//        frame = new JFrame("Chess Interface");
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create a CardLayout container
         JPanel mainPanel = new JPanel(new CardLayout());
+//        mainPanel.setLayout(new CardLayout());
 
         // Main view with the chess wallpaper and initial buttons
         JPanel mainView = createMainView(mainPanel);
@@ -67,10 +138,10 @@ public class ChessSwingOpening {
         frame.add(mainPanel);
 
         // Set frame size
-        frame.setSize(990, 688);
+//        frame.setSize(990, 688);
 
         // Set frame visibility
-        frame.setVisible(true);
+//        frame.setVisible(true);
 
         // Start playing background music
         playBackgroundMusic();
@@ -115,15 +186,30 @@ public class ChessSwingOpening {
             }
         });
 
+        // this button returns 1 to the panelGame to set mode as player tp player
         playButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Handle play button click
+                Main.MODE = 1;
+                frame.dispose();
+                clip.stop();
+                clip.close();
+//                System.exit(0);
+
             }
         });
 
+        // this button returns 0 to the PanelGame to set the mode as player vs computer
         computerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Handle computer button click
+                Main.MODE = 0;
+//                Main.check = true;
+                frame.dispose();
+//                new PanelGame(Main.MODE);
+                clip.stop();
+                clip.close();
+//                System.exit(0);
             }
         });
 
@@ -461,11 +547,11 @@ public class ChessSwingOpening {
         return nextButton;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new ChessSwingOpening();
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                new ChessSwingOpening();
+//            }
+//        });
+//    }
 }
