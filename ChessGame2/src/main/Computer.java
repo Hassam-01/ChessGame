@@ -139,9 +139,11 @@ public class Computer {
 					(PanelGame.compColor == PanelGame.BLACK && P.row == 7)) {
 				
 				PanelGame.simpieces.remove(P.getIndex());
+
 				PanelGame.simpieces.add(new Queen(PanelGame.compColor, P.row, P.col));
 				
 				PanelGame.copyArrayListComp(PanelGame.pieces, PanelGame.simpieces);
+				isValid = true;
 				
 			}
 		}
@@ -368,9 +370,9 @@ public class Computer {
 			decideTheMove(validMoves);
 
 		}
-		if (!isValid || !PanelGame.simpieces.contains(cActiveP)) { // if there are no valid moves add the piece to
+		if (!isValid ) { // if there are no valid moves add the piece to
 																	// checked so that next time before an move is
-																	// played this piece is not checked again
+			System.out.println("FROM IS NOT VALID ");														// played this piece is not checked again
 			checkedPieces.add(cActiveP);
 			choosePiece(); // call the choose piece again to check another piece for valid moves
 		}
@@ -685,7 +687,7 @@ public class Computer {
 		// thus the trade value needs to be positive
 
 		for (ChessPieces P : PanelGame.simpieces) {
-			if (P.color != Bpiece.piece.color && P.col == Bpiece.bestCol && P.row == Bpiece.bestRow) {
+			if ( P.color != Bpiece.piece.color && P.col == Bpiece.bestCol && P.row == Bpiece.bestRow) {
 					if(!(P instanceof King)) {
 				hitPiece = P; // hit Piece is the being captured by the computer
 
@@ -705,8 +707,6 @@ public class Computer {
 
 	// returns a double value, which is the difference between the computer piece
 	// value and opponent piece value
-	
-	
 	private boolean kingCheckAfter(bestMoves Piece) {
 		
 		for (ChessPieces P : PanelGame.simpieces) {

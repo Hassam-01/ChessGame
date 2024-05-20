@@ -16,5 +16,4 @@ public class Main{
         window2.setLocationRelativeTo(null); //*  null to make the window appear in the center
         window2.setVisible(true);
     }
-    // hello
 }
