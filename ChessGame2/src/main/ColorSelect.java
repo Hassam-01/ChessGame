@@ -1,27 +1,69 @@
 package main;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 public class ColorSelect extends JFrame implements WindowListener, ActionListener {
     JButton black;
     JButton white;
-    public static int userColor = 0; //0 is white, 1 is black
     public ColorSelect(){
         System.out.println("Color Wind");
+
+        ImageIcon backgroundIcon = null;
+        try {
+            Image backgroundImage = ImageIO.read(getClass().getResource("/piece/Wallpaper2.png"));
+            backgroundIcon = new ImageIcon(backgroundImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //then we create a background label
+        JLabel background = new JLabel(backgroundIcon);
+        background.setLayout(new GridBagLayout()); // Use GridBagLayout to center buttons
+
+
         JPanel pan = new JPanel();
         black = new JButton("Black");
         black.addActionListener(this);
         white = new JButton("White");
         white.addActionListener(this);
-        pan.add(black);
-        pan.add(white);
-        this.add(pan);
-        this.setSize(300,300);
+
+        // Create panel for buttons with transparent background as we dont want the panel to block the image
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+
+        black = new JButton("Black");
+
+        black.setBackground(Color.BLACK);
+        black.setForeground(Color.WHITE);
+        white.setBackground(Color.WHITE);
+        white.setForeground(Color.BLACK);
+
+        black.addActionListener(this);
+        white = new JButton("White");
+        white.addActionListener(this);
+
+        buttonPanel.add(black);
+        buttonPanel.add(white);
+
+        // Add the button panel to the background label
+        background.add(buttonPanel, new GridBagConstraints());
+
+        // Set the background label as the content pane
+        this.setContentPane(background);
+
+
+//        pan.add(black);
+//        pan.add(white);
+//        this.add(pan);
+
+        this.setSize(200,200);
         this.setLocationRelativeTo(null);
         this.addWindowListener(this);
     }
