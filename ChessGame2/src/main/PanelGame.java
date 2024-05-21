@@ -15,6 +15,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -53,6 +55,7 @@ public class PanelGame extends JPanel implements Runnable {
 
     int movesRow;
     String movesCol;
+    String initials;
 
     // * Boolean values for the piece to move
     boolean canMove;        // check if the piece is able to move
@@ -75,15 +78,24 @@ public class PanelGame extends JPanel implements Runnable {
     ChessPieces activePiece, checkingP, compPiece; // The piece on which the mouse is pressed
     public static ChessPieces castlingPiece; // used for castling of kind and rook
 
+    private JButton homeButton;
 
     // ! Constructor for PanelGame
     public PanelGame(int MODE) {
-
         PanelGame.MODE = MODE; // setting the mode
         setPreferredSize(new Dimension(WIDTH, HEIGHT)); // ? defining the size of the panel
         setBackground(Color.black); // ? setting the background as black
+        homeButton = new JButton("Home");
+        homeButton.setBounds(950, 10, 40, 30);
+        homeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.main(new String[0]);
+            }
+        });
         addMouseMotionListener(mouse); // Adding mouse motion listener
         addMouseListener(mouse);
+        add(homeButton);
         // ? Setting the pieces on the board
         setPieces();
 
@@ -712,16 +724,20 @@ public class PanelGame extends JPanel implements Runnable {
         if (activePiece != null) {
             movesCol = getFile();
             movesRow = activePiece.row + 1;
+            initials = getIntials(activePiece);
 			if(movesCol != null) {
-				String movesPlayed = movesCol + movesRow;
+				String movesPlayed = initials +  movesCol + movesRow;
 				movePlayed.add(movesPlayed);
+
 			}
         }
         }else if(MODE == PVsC && currentColor == compColor && compPiece != null){
              movesCol = getFile();
              movesRow = compPiece.row + 1;
-             if(movesCol != null) {
-                 String movesPlayed = movesCol + movesRow;
+             initials = getIntials(compPiece);
+
+            if(movesCol != null) {
+                 String movesPlayed = initials +  movesCol + movesRow;
                  movePlayed.add(movesPlayed);
              }
          }
@@ -879,8 +895,8 @@ public class PanelGame extends JPanel implements Runnable {
         g2.setColor(Color.BLUE);
 		for(String move: movePlayed){
 			g2.setFont(new Font("Book Antique", Font.PLAIN, 15));
-			g2.drawString(move, x , y);
-			x += 30;
+			g2.drawString( move, x , y);
+			x += 45;
 			if(x > 985){
 				x = 700;
 				y += 30;
@@ -891,5 +907,18 @@ public class PanelGame extends JPanel implements Runnable {
                 g2.setColor(Color.BLUE);
 		}
 	}
+
+    private String getIntials(ChessPieces P){
+
+        switch(P.type){
+            case Type.KING: return "K: ";
+            case Type.PAWN: return "P: ";
+            case Type.ROOK: return "R: ";
+            case Type.QUEEN: return "Q: ";
+            case Type.KNIGHT: return "Kn: ";
+            case Type.BISHOP: return "B: ";
+        }
+        return "";
+    }
 
 }

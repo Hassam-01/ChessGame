@@ -44,7 +44,7 @@ public class ChessSwingOpening {
                     cs.setVisible(true);
                 } else{
                     JFrame window = new JFrame("Chess Mate AI");
-
+                    window.setLayout(new BorderLayout());
                     window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // ? setting game close option
                     window.setResizable(false); // ? Make resize false so can't be resized to avoid disruption in display
 
@@ -136,13 +136,6 @@ public class ChessSwingOpening {
 
         // Add the main panel to the frame
         frame.add(mainPanel);
-
-        // Set frame size
-//        frame.setSize(990, 688);
-
-        // Set frame visibility
-//        frame.setVisible(true);
-
         // Start playing background music
         playBackgroundMusic();
     }
@@ -546,12 +539,4 @@ public class ChessSwingOpening {
 
         return nextButton;
     }
-
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                new ChessSwingOpening();
-//            }
-//        });
-//    }
 }

@@ -2,6 +2,7 @@ package main;
 
 
 
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -11,7 +12,6 @@ public class Board {
 
    public static final int SQUARE_SIZE = 86;
    public static final int HALF_SQUARE_SIZE = SQUARE_SIZE/2;
-
 
    public void draw(Graphics2D g2){
 

@@ -827,12 +827,12 @@ public class Computer {
 			}
 		}
 		
-//		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured && !underAttack && !capturePlayerPiece && !anyPieceInThreat())
-//			{
-//			tradeValue += 5;
-//			System.out.println(" From Check: "+ tradeValue);
-//
-//			}
+		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured && !underAttack && !capturePlayerPiece && !anyPieceInThreat())
+			{
+			tradeValue += 5;
+			System.out.println(" From Check: "+ tradeValue);
+
+			}
 		try {
 
 		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece)
@@ -925,7 +925,7 @@ public class Computer {
 //			System.out.println("From CanCHECK: 01"+ piece.precol+" "+ piece.prerow);
 //			System.out.println("From CanCHECK: 02"+ playerKing.col+" "+ playerKing.row);
 
-			if(piece.canMove(playerKing.col, playerKing.row)) {
+			if(piece.canMove(playerKing.col, playerKing.row) && !(piece instanceof  Pawn)) {
 				piece.precol = tempCol; // resetting the col and row of the piece
 				piece.prerow = tempRow;
 				return true;
