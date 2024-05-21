@@ -90,34 +90,6 @@ public class PanelGame extends JPanel implements Runnable {
         copyArrayList(simpieces, pieces);
     }
 
-    // Method to invoke user to choose color. The other color would be set for the computer
-    public void chooseColor() {
-        System.out.println("Please Choose Color: ");
-        int userColor = scan.nextInt();
-        if (userColor == 1) {
-            currentColor = WHITE;
-            compColor = BLACK;
-        } else {
-            compColor = WHITE;
-            currentColor = BLACK;
-        }
-    }
-
-    // selecting the mode of play
-// public void selectMode(){
-//	 int mode;
-//	 System.out.println("Please choose mode 1 for pVp 0 for pVc: " + MODE);
-////	 Scanner scan = new Scanner(System.in);
-//
-////	 mode = scan.nextInt();
-//
-//	 switch(PanelGame.MODE) {
-//	 case 0: PanelGame.MODE = PVsC; break;
-//	 case 1: PanelGame.MODE = PVsP; break;
-//	 }
-////	 scan.close();
-// }
-
     public void setPieces() {
 
         // ! White Pieces
@@ -335,7 +307,6 @@ public class PanelGame extends JPanel implements Runnable {
 
         for (ChessPieces P : simpieces) {
             if (opponent) {
-                System.out.println(P+" Piece from get king:  "+ P.col + " "+ P.row);
                 if (P.type == Type.KING &&  P.color != currentColor) {
                     king = P;
                 }
@@ -345,7 +316,6 @@ public class PanelGame extends JPanel implements Runnable {
                 }
             }
         }
-        System.out.println(king+" KING FROM GETKING");
         return king;
     }
 
@@ -549,12 +519,7 @@ public class PanelGame extends JPanel implements Runnable {
         // check mate is check  for up down and left right, diagonal and not for knight because it can't be blocked
 
         ChessPieces king = getKing(true);
-        if (checkingP != null) {
 
-
-            System.out.println("KING ISCHECKMATE: " + king.col + " " + king.row);
-            System.out.println("CHECKINGP ISCHECKMATE: " + checkingP.col + " " + checkingP.row);
-        }
         if (kingCanMove(king) || checkingP == null) {
             return false;
         } else {
@@ -638,14 +603,10 @@ public class PanelGame extends JPanel implements Runnable {
 
                 // lower
                 if (checkingP.row > king.row) {
-                    System.out.println("IN CHECK: ");
                     // lower left
                     if (checkingP.col < king.col) {
-                        System.out.println("IN CHECK: 02");
                         for (int col = checkingP.col, row = checkingP.row; col < king.col; col++, row--) {
-                            System.out.println("IN CHECK: 2.1 " + col + " " + row);
                             for (ChessPieces P : simpieces) {
-                                System.out.println("IN CHECK: 03 " + P + " " + P.color + " " + P.col + " " + P.row);
                                 if (P != king && P.color != checkingP.color && P.canMove(col, row)) {
 
                                     return false;
@@ -675,38 +636,22 @@ public class PanelGame extends JPanel implements Runnable {
     public boolean kingCanMove(ChessPieces king) {
 
         // find any possible move of the king, if so return true else false
-        if (isValidMove(king, -1, -1)) {
+        if (isValidMove(king, -1, -1))
             return true;
-        }
-        ;
-        if (isValidMove(king, 0, -1)) {
+        if (isValidMove(king, 0, -1))
             return true;
-        }
-        ;
-        if (isValidMove(king, -1, 0)) {
+        if (isValidMove(king, -1, 0))
             return true;
-        }
-        ;
-        if (isValidMove(king, 1, 1)) {
+        if (isValidMove(king, 1, 1))
             return true;
-        }
-        ;
-        if (isValidMove(king, -1, 1)) {
+        if (isValidMove(king, -1, 1))
             return true;
-        }
-        ;
-        if (isValidMove(king, 1, -1)) {
+        if (isValidMove(king, 1, -1))
             return true;
-        }
-        ;
-        if (isValidMove(king, 1, 0)) {
+        if (isValidMove(king, 1, 0))
             return true;
-        }
-        ;
-        if (isValidMove(king, 0, 1)) {
+        if (isValidMove(king, 0, 1))
             return true;
-        }
-        ;
 
 
         return false;
@@ -777,7 +722,6 @@ public class PanelGame extends JPanel implements Runnable {
              movesRow = compPiece.row + 1;
              if(movesCol != null) {
                  String movesPlayed = movesCol + movesRow;
-                 System.out.println(movesCol + " from moves col by computer" );
                  movePlayed.add(movesPlayed);
              }
          }
@@ -802,11 +746,8 @@ public class PanelGame extends JPanel implements Runnable {
                 if (P.color == WHITE)
                     P.twostepped = false;
             }
-            System.out.println();
         }
-//	 if(currentColor == compColor) {
-//		 Comp.choosePiece(); // Computer move intiated from here
-//	 }
+
         activePiece = null;
     }
 

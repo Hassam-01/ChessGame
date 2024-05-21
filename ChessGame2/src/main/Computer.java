@@ -72,13 +72,6 @@ public class Computer {
 		// Choosing a piece
 		cActiveP = null;
 		for (ChessPieces P : PanelGame.simpieces) {
-			if (P.color == PanelGame.compColor) {
-				// when piece found setting it as active
-				System.out.println("Piece from Choose Piece: "+ P+ " "+ P.col+" "+P.row);
-			}
-		
-		}
-		for (ChessPieces P : PanelGame.simpieces) {
 			isValid = false;
 			if (P.color == PanelGame.compColor && !checkedPieces.contains(P)) {
 				// when piece found setting it as active
@@ -260,7 +253,7 @@ public class Computer {
 						int row = P3.row + dir[1];
 						if (P3.canMove(col, row)) {
 							for (ChessPieces pi : PanelGame.simpieces) {
-								if (pi.color != PanelGame.compColor && pi.canMove(col, row)) {
+								if (pi.color != PanelGame.compColor && pi.canMove(col, row, true)) {
 									System.out.println("PI: "+pi+ " "+ pi.col+" "+pi.row);
 									System.out.println("Enteering king move 001: "+ col+" "+ row);
 									danger = true;
@@ -284,17 +277,11 @@ public class Computer {
 
 	private void decideTheMove(ArrayList<bestMoves> moves) {
 		
-//		for(bestMoves BM: moves) {
-//			System.out.println("Best Moves from decide: "+BM.piece +" "+BM.bestCol+" "+BM.bestRow);
-//		}
-		
-		
 		System.out.println("Entered Decide move: ");
 		history.clear();
 		if (staleMate() || checkMate()) {
 			System.out.println("Stale Mate or check mate");
 			PanelGame.compLose = true;
-//			System.exit(0);
 		}
 
 		else {
@@ -304,7 +291,7 @@ public class Computer {
 			bestMove = moves.get(0); // setting the first object in valid Move array as best move piece
 
 			for (int i = 0; i < moves.size() - 1; i++) {
-
+				System.out.println("PIECE : "+ moves.get(i).piece+ " col" +moves.get(i).bestCol+" ROW: "+ moves.get(i).bestRow + " RATE: "+ moves.get(i).moveRating);
 				if (bestMove.moveRating > moves.get(i + 1).moveRating) {
 
 					continue;
@@ -371,8 +358,7 @@ public class Computer {
 
 		}
 		if (!isValid ) { // if there are no valid moves add the piece to
-																	// checked so that next time before an move is
-			System.out.println("FROM IS NOT VALID ");														// played this piece is not checked again
+			// checked so that next time before an move is
 			checkedPieces.add(cActiveP);
 			choosePiece(); // call the choose piece again to check another piece for valid moves
 		}
@@ -383,15 +369,7 @@ public class Computer {
 
 		targetCol = cActiveP.col;
 		targetRow = cActiveP.row + 1;
-		
-		System.out.println("PAWN PIECE FROM PAWN"+ cActiveP + cActiveP.col +" "+ cActiveP.row);
-		for (ChessPieces P : PanelGame.simpieces) {
-			if (P.color == PanelGame.compColor) {
-				// when piece found setting it as active
-				System.out.println("Piece from Choose Piece: "+ P+ " "+ P.col+" "+P.row);
-			}
-		
-		}
+
 		if (cActiveP.canMove(targetCol, targetRow)) {
 			validMovesCount++;
 
@@ -447,7 +425,7 @@ public class Computer {
 //		cActiveP.detectPiece(targetCol, targetRow);	
 		// same row col +1/-1, same col row+1/-1, col row +1/-1
 
-		int directions[][] = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } };
+		int directions[][] = { {0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } };
 
 		for (int dir[] : directions) {
 
@@ -458,11 +436,10 @@ public class Computer {
 
 				validMovesCount++;
 
-				moveRating = -5; // moving king without any trade value is not a recommended move in chess
+				moveRating = -2; // moving king without any trade value is not a recommended move in chess
 
 				isValid = true;
-				bestMoves p = new bestMoves(cActiveP.getIndex(), maxCol, maxRow, cActiveP.col, cActiveP.row,
-						maxMoveRating, cActiveP);
+				bestMoves p = new bestMoves(cActiveP.getIndex(), col, row, cActiveP.col, cActiveP.row, maxMoveRating, cActiveP);
 
 				setMoveRating(p);
 
@@ -841,7 +818,6 @@ public class Computer {
 						if (pi2.color != PanelGame.compColor) {
 							if (!pi2.canMove(Piece.bestCol, Piece.bestRow,true)) {
 								tradeValue += getPieceValue(Piece.piece);
-								System.out.println(tradeValue + " self taken");
 								underAttack = true;
 								break;
 							}
@@ -860,11 +836,9 @@ public class Computer {
 		try {
 
 		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece)
-			System.out.println("Repeat move!");
 //			if(history.get(0).activeCol == Piece.bestCol && history.get(0).activeRow == Piece.bestRow)
 				{
 				tradeValue -= 3;
-				
 				}
 		}catch(Exception e) {}
 		System.out.println(tradeValue + " exit staus value");
