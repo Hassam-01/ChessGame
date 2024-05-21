@@ -8,13 +8,7 @@ import piece.Queen;
 import piece.Rook;
 //package Chess.Main;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLOutput;
@@ -85,11 +79,21 @@ public class PanelGame extends JPanel implements Runnable {
         PanelGame.MODE = MODE; // setting the mode
         setPreferredSize(new Dimension(WIDTH, HEIGHT)); // ? defining the size of the panel
         setBackground(Color.black); // ? setting the background as black
+
+        setLayout(null);
+
         homeButton = new JButton("Home");
-        homeButton.setBounds(950, 10, 40, 30);
+        homeButton.setBounds(800, 600, 90, 30);
+        homeButton.setBackground(Color.white);
+        homeButton.setForeground(Color.black);
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Dispose of the current frame
+                Window window = SwingUtilities.getWindowAncestor(PanelGame.this);
+                if (window != null) {
+                    window.dispose();
+                }
                 Main.main(new String[0]);
             }
         });
