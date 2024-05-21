@@ -67,12 +67,13 @@ public class PanelGame extends JPanel implements Runnable {
 
     // Array list to display piece that pawn can be promoted to
     ArrayList<ChessPieces> promoPiece = new ArrayList<>();
-    ArrayList<String> movePlayed = new ArrayList<>(); // to store the moves that have been played
+   public static ArrayList<String> movePlayed = new ArrayList<>(); // to store the moves that have been played
 
     ChessPieces activePiece, checkingP, compPiece; // The piece on which the mouse is pressed
     public static ChessPieces castlingPiece; // used for castling of kind and rook
 
     private JButton homeButton;
+    private JScrollPane scrollBar;
 
     // ! Constructor for PanelGame
     public PanelGame(int MODE) {
@@ -93,6 +94,9 @@ public class PanelGame extends JPanel implements Runnable {
                 Window window = SwingUtilities.getWindowAncestor(PanelGame.this);
                 if (window != null) {
                     window.dispose();
+                    pieces.clear();
+                    simpieces.clear();
+                    movePlayed.clear();
                 }
                 Main.main(new String[0]);
             }
@@ -887,29 +891,15 @@ public class PanelGame extends JPanel implements Runnable {
 
 	private void drawMovesPlayed(Graphics2D g2){
 
-        JScrollPane scrollBar = new JScrollPane();
-        scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollBar.setPreferredSize(new Dimension(280, 200));
-        JTextArea history = new JTextArea();
+        MovesPanel MP = new MovesPanel();
+       JScrollPane scrollBar = new JScrollPane(MP);
 
-        scrollBar.add(history);
-        int x = 700;
-        int y = 300;
+        scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollBar.setBounds(720, 350, 250, 200);
+        add(scrollBar);
 
-        g2.setColor(Color.BLUE);
-		for(String move: movePlayed){
-			g2.setFont(new Font("Book Antique", Font.PLAIN, 15));
-			g2.drawString( move, x , y);
-			x += 45;
-			if(x > 985){
-				x = 700;
-				y += 30;
-			}
-            if(g2.getColor() == Color.BLUE)
-                g2.setColor(Color.YELLOW);
-            else
-                g2.setColor(Color.BLUE);
-		}
+        MP.setPreferredSize(new Dimension(250, MP.getPreferredSize().height));
+        scrollBar.validate();
 	}
 
     private String getIntials(ChessPieces P){
@@ -926,3 +916,5 @@ public class PanelGame extends JPanel implements Runnable {
     }
 
 }
+
+
