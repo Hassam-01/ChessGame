@@ -174,11 +174,8 @@ public class PanelGame extends JPanel implements Runnable {
 
 
     public void launchGame() {
+	// To start new thread
         gamThread = new Thread(this);
-//     selectMode();
-//     if(MODE == PVsC)
-//    	 chooseColor();  // Prompt the user to choose color
-
         gamThread.start(); // ? this methods invokes the run method being implemented from Runnable
 
     }
@@ -206,8 +203,7 @@ public class PanelGame extends JPanel implements Runnable {
     }
 
     public void update() {
-//	 if(currentColor != compColor) 
-
+	    // there is seperate condition for computer pawn promotion
         if (MODE == PVsP || (MODE == PVsC && currentColor != compColor)) {
 
             if (promotion) {
@@ -292,15 +288,14 @@ public class PanelGame extends JPanel implements Runnable {
         for (ChessPieces P : simpieces) {
             if (opponent) {
                 if (P.type == Type.KING &&  P.color != currentColor) {
-                    king = P;
+                    return P;
                 }
             } else {
                 if (P.type == Type.KING && P.color == currentColor) {
-                    king = P;
+                    return P;
                 }
             }
         }
-        return king;
     }
 
     // opponent can capture king
@@ -378,29 +373,14 @@ public class PanelGame extends JPanel implements Runnable {
 
         canMove = false;
         validSquare = false;
-
-//	 // copying the backup pieces to the array list so that the pieces dont disappear when the player hovers the active piece over the pieces
-//	 copyArrayList(simpieces, pieces);
-//	 
-
-        // Reset castling position
-//	 if(castlingPiece != null) {
-//		 castlingPiece.col = castlingPiece.precol;
-//		 castlingPiece.x = castlingPiece.getX(castlingPiece.col);
-//		 castlingPiece = null;
-//		 
-//	 }
-
-
+	    
         // updating the position of the piece according to the mouse movements
         compPiece.x = compPiece.getX(compPiece.col);
         compPiece.y = compPiece.getY(compPiece.row);
 
         compPiece.col = compPiece.getCol(compPiece.x);
         compPiece.row = compPiece.getRow(compPiece.y);
-
-//	 if(compPiece.canMove(compPiece.col, compPiece.row)) {
-//		 
+	 
         canMove = true;
 
         if (compPiece.hittingPiece != null) {
