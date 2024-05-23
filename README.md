@@ -1,6 +1,6 @@
 Chess Mate AI
 
-    Welcome to Chess Mate AI! This Java-based chess game features both player-versus-player and player-versus-computer modes, complete with a graphical user interface, piece movement handling, and AI-driven computer     opponent logic. This README will guide you through the project's structure, setup, and components.
+Welcome to Chess Mate AI! This Java-based chess game features both player-versus-player and player-versus-computer modes, complete with a graphical user interface, piece movement handling, and AI-driven computer     opponent logic. This README will guide you through the project's structure, setup, and components.
 
 Running the Game
 
