@@ -782,7 +782,8 @@ public class PanelGame extends JPanel implements Runnable {
         board.draw(g2);
 
         // * Pieces
-        for (ChessPieces P : simpieces) {
+        ArrayList<ChessPieces> copy = new ArrayList<>(simpieces);
+        for (ChessPieces P : copy) {
             P.draw(g2);
         }
 
