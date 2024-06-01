@@ -131,24 +131,6 @@ public class PanelGame extends JPanel implements Runnable {
         pieces.add(new Rook(WHITE, 7, 7));
 
 
-//     pieces.add(new Pawn(WHITE, 6, 0));
-//     pieces.add(new Pawn(WHITE, 6, 1));
-//     pieces.add(new Pawn(WHITE, 6, 2));
-//     pieces.add(new Pawn(WHITE, 6, 3));
-//     pieces.add(new Pawn(WHITE, 6, 4));
-////     pieces.add(new Pawn(WHITE, 6, 5));
-////     pieces.add(new Pawn(WHITE, 6, 6));
-////     pieces.add(new Pawn(WHITE, 6, 7));
-//     pieces.add(new Rook(WHITE, 7, 0));
-//////     pieces.add(new Knight(WHITE, 7, 1));
-////     pieces.add(new Bishop(WHITE, 3, 6));
-//     pieces.add(new Queen(WHITE, 2, 0));
-//     pieces.add(new King(WHITE, 7, 4));
-//     pieces.add(new Bishop(WHITE, 7, 5));
-//////     pieces.add(new Knight(WHITE, 7, 6));
-//     pieces.add(new Rook(WHITE, 7, 6));
-
-
         // ! Black Pieces
         pieces.add(new Pawn(BLACK, 1, 0));
         pieces.add(new Pawn(BLACK, 1, 1));
@@ -166,24 +148,6 @@ public class PanelGame extends JPanel implements Runnable {
         pieces.add(new Knight(BLACK, 0, 6));
         pieces.add(new King(BLACK, 0, 4));
         pieces.add(new Queen(BLACK, 0, 3));
-
-
-//   pieces.add(new Pawn(BLACK, 1, 0));
-//   pieces.add(new Pawn(BLACK, 4, 1));
-//   pieces.add(new Pawn(BLACK, 5, 2));
-//   pieces.add(new Pawn(BLACK, 1, 3));
-//   pieces.add(new Pawn(BLACK, 5, 4));
-//   pieces.add(new Pawn(BLACK, 3, 5));
-////   pieces.add(new Pawn(BLACK, 1, 6));
-////   pieces.add(new Pawn(BLACK, 1, 7));
-////   pieces.add(new Rook(BLACK, 0, 7));
-//////   pieces.add(new Rook(BLACK, 0, 0));
-////   pieces.add(new Bishop(BLACK, 3, 7));
-////   pieces.add(new Bishop(BLACK, 0, 5));
-////   pieces.add(new Knight(BLACK, 0, 6));
-////   pieces.add(new Knight(BLACK, 4, 3));
-//   pieces.add(new King(BLACK, 1, 2));
-////   pieces.add(new Queen(BLACK, 2, 3));
 
 
     }
@@ -210,11 +174,8 @@ public class PanelGame extends JPanel implements Runnable {
 
 
     public void launchGame() {
+	// To start new thread
         gamThread = new Thread(this);
-//     selectMode();
-//     if(MODE == PVsC)
-//    	 chooseColor();  // Prompt the user to choose color
-
         gamThread.start(); // ? this methods invokes the run method being implemented from Runnable
 
     }
@@ -242,8 +203,7 @@ public class PanelGame extends JPanel implements Runnable {
     }
 
     public void update() {
-//	 if(currentColor != compColor) 
-
+	    // there is seperate condition for computer pawn promotion
         if (MODE == PVsP || (MODE == PVsC && currentColor != compColor)) {
 
             if (promotion) {
@@ -328,15 +288,14 @@ public class PanelGame extends JPanel implements Runnable {
         for (ChessPieces P : simpieces) {
             if (opponent) {
                 if (P.type == Type.KING &&  P.color != currentColor) {
-                    king = P;
+                    return P;
                 }
             } else {
                 if (P.type == Type.KING && P.color == currentColor) {
-                    king = P;
+                    return P;
                 }
             }
         }
-        return king;
     }
 
     // opponent can capture king
@@ -414,29 +373,14 @@ public class PanelGame extends JPanel implements Runnable {
 
         canMove = false;
         validSquare = false;
-
-//	 // copying the backup pieces to the array list so that the pieces dont disappear when the player hovers the active piece over the pieces
-//	 copyArrayList(simpieces, pieces);
-//	 
-
-        // Reset castling position
-//	 if(castlingPiece != null) {
-//		 castlingPiece.col = castlingPiece.precol;
-//		 castlingPiece.x = castlingPiece.getX(castlingPiece.col);
-//		 castlingPiece = null;
-//		 
-//	 }
-
-
+	    
         // updating the position of the piece according to the mouse movements
         compPiece.x = compPiece.getX(compPiece.col);
         compPiece.y = compPiece.getY(compPiece.row);
 
         compPiece.col = compPiece.getCol(compPiece.x);
         compPiece.row = compPiece.getRow(compPiece.y);
-
-//	 if(compPiece.canMove(compPiece.col, compPiece.row)) {
-//		 
+	 
         canMove = true;
 
         if (compPiece.hittingPiece != null) {
