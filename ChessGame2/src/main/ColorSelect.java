@@ -58,11 +58,6 @@ public class ColorSelect extends JFrame implements WindowListener, ActionListene
         // Set the background label as the content pane
         this.setContentPane(background);
 
-
-//        pan.add(black);
-//        pan.add(white);
-//        this.add(pan);
-
         this.setSize(200,200);
         this.setLocationRelativeTo(null);
         this.addWindowListener(this);

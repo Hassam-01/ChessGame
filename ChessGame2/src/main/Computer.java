@@ -11,34 +11,18 @@ import piece.Queen;
 import piece.Rook;
 
 // Pieces Value
-
 //	Pawn 	1
 //	Knight 	3
 //	Bishop 	3
 //	Rook 	5
 //	Queen 	9
 
-// PROBS:
-// moves of comp skipped
-// king moves not proper -- done
-// pawn canCheckking not working 
-// repeated moves -- done
 
 // pawn on the center are worth more than the pawns at the ends
 // a pair of bishop is more valuable than knight
 // king is arbitarily given a very high score
 // forced move 
 
-// NOTE:
-// Stalemate and checkmate logic to be implemented  -- done
-// and if the piece is under attack the piece must try to save it self -- done
-// debug king in check -- done
-// check when the opponent is in check 
-// repeated moves -- done
-// promotion of pieces --done 
-// king save it self -- done 
-// queen jumps to 7 2- done
-// bug in the points -- done
 public class Computer {
 
 	public int targetCol, targetRow; // the target row and column where the computer piece can move
@@ -52,8 +36,6 @@ public class Computer {
 	double moveRating = 1;
 	int kingCol;
 	int kingRow;
-
-//	PanelGame gameobj = new PanelGame();
 
 	ChessPieces hitPiece;
 	ChessPieces checkingP;
@@ -94,9 +76,6 @@ public class Computer {
 			} else if (cActiveP instanceof Rook) {
 				cRook();
 			}
-			
-			
-
 		}
 
 		makeMove();
@@ -105,7 +84,7 @@ public class Computer {
 
 	public ChessPieces Cpiece() {
 		checkedPieces.clear();
-		System.out.println(cActiveP + " Col: "+ cActiveP.col + " Row: "+cActiveP.row);
+		System.out.println("Chosen Piece "+ cActiveP + " At Col: "+ cActiveP.col + " Row: "+cActiveP.row);
 		PanelGame.copyArrayListComp(PanelGame.pieces, PanelGame.simpieces);
 
 		Pause();
@@ -143,7 +122,6 @@ public class Computer {
 	}
 	public void saveKing() {
 		// Iterate through all pieces of the defending color
-		System.out.println("Entered saveKing");
 		boolean checkKingDanger = false;
 		
 		boolean checkCapture = false, checkBlock = false;
@@ -180,24 +158,16 @@ public class Computer {
 
 			}
 		}
-		System.out.println("Check capture 01 "+ checkCapture);
-
 		if(!checkCapture) {
 			
 		for (ChessPieces P2 : PanelGame.simpieces) {
-//			System.out.println("Entering block check ");
 			if (P2.color == PanelGame.compColor) {
 				// Check if the piece can block the check
 				// a knight's check can't be blocked
 				if (!(checkingP instanceof Knight) && !(P2 instanceof King)) {
 					// Determine the direction of the check
-//					System.out.println("Entering block check Not KING ");
-
-//					int dCol = Integer.compare(checkingP.col, kingCol);
-//					int dRow = Integer.compare(checkingP.row, kingRow);
-
 					int attackDir = getAttackDirection(kingCol, kingRow, checkingP);
-					System.out.println(attackDir);
+
 					int dCol = 0, dRow =0;
 					switch(attackDir) {
 					case UP:  dCol = 0; dRow = -1;    break;
@@ -212,11 +182,8 @@ public class Computer {
 					
 					int col = checkingP.col + dCol;
 					int row = checkingP.row + dRow;
-//					System.out.println("KINGCOL : "+ kingCol+" "+ " KINNGROW: "+ kingRow);
-//					System.out.println("COL 001: "+ col+" "+ " ROW: "+ row);
-					
+
 					while(!(col == kingCol && row == kingRow)) {
-//						System.out.println("COL : "+ col+" "+ " ROW: "+ row);
 						if(P2.canMove(col, row)) {
 						// Add blocking move to the list of moves
 						bestMoves saveKingP = new bestMoves(P2.getIndex(), col, row, P2.col, P2.row, 0, P2);
@@ -228,20 +195,11 @@ public class Computer {
 						col += dCol;
 						row += dRow;
 					}
-					// Check positions between the checking piece and the king
-//					for (int col = kingCol + dCol, row = kingRow + dRow; col != checkingP.col
-//							|| row != checkingP.row; col += dCol, row += dRow) {
-//						// Check if the piece can move to this position without putting the king in
-//						// check
-//					
-//					}
 				}
 			}
 		}
 	}	
 		if(!checkBlock && !checkCapture) {
-			System.out.println("Enteering king move ");
-
 		for (ChessPieces P3 : PanelGame.simpieces) {
 			if (P3.color == PanelGame.compColor) {
 				if (P3 instanceof King) {
@@ -255,13 +213,11 @@ public class Computer {
 							for (ChessPieces pi : PanelGame.simpieces) {
 								if (pi.color != PanelGame.compColor && pi.canMove(col, row, true)) {
 									System.out.println("PI: "+pi+ " "+ pi.col+" "+pi.row);
-									System.out.println("Enteering king move 001: "+ col+" "+ row);
 									danger = true;
 									break;
 								}
 							}
 							if(!danger) {
-								System.out.println("Enteering king move : "+ col+" "+ row);
 								bestMoves saveKingP = new bestMoves(P3.getIndex(), col, row, P3.col, P3.row, 0, P3);
 								saveKingP.moveRating = tradeValue(saveKingP);
 								checkMoves.add(saveKingP);
@@ -276,24 +232,22 @@ public class Computer {
 	}
 
 	private void decideTheMove(ArrayList<bestMoves> moves) {
-		
-		System.out.println("Entered Decide move: ");
+
 		history.clear();
 		if (staleMate() || checkMate()) {
-			System.out.println("Stale Mate or check mate");
 			PanelGame.compLose = true;
 		}
 
 		else {
-			System.out.println("Entered Else: 01 ");
 			bestMoves bestMove = null;
 
 			bestMove = moves.get(0); // setting the first object in valid Move array as best move piece
-
+			System.out.println("\n+++++++++++++++++++++++++ All Possible Moves +++++++++++++++++++++ ");
 			for (int i = 0; i < moves.size() - 1; i++) {
-				System.out.println("PIECE : "+ moves.get(i).piece+ " col" +moves.get(i).bestCol+" ROW: "+ moves.get(i).bestRow + " RATE: "+ moves.get(i).moveRating);
+				System.out.println("PIECE : "+ moves.get(i).piece+ "\nFrom: Col" +moves.get(i).activeCol+" ROW: "+
+						moves.get(i).activeRow +"\nTo:  Col" +moves.get(i).bestCol+" ROW: "+ moves.get(i).bestRow +
+						" RATE: "+ moves.get(i).moveRating+"\n");
 				if (bestMove.moveRating > moves.get(i + 1).moveRating) {
-
 					continue;
 				} else
 					bestMove = moves.get(i + 1);
@@ -301,12 +255,9 @@ public class Computer {
 			}
 			// locating the choosen piece on the board and setting it as Active
 			for (ChessPieces p : PanelGame.simpieces) {
-//				System.out.println("Entered if 01: "+ bestMove.piece+" "+ bestMove.bestCol+" "+ bestMove.bestRow);
-
 				if (p == bestMove.piece && p.getIndex() == bestMove.index
 						&& p.canMove(bestMove.bestCol, bestMove.bestRow)
 						&& PanelGame.simpieces.contains(bestMove.piece)) {
-					System.out.println("Entered if 02: "+ bestMove.piece+" "+ bestMove.bestCol+" "+ bestMove.bestRow);
 					cActiveP = bestMove.piece;
 
 					targetCol = bestMove.bestCol;
@@ -317,7 +268,7 @@ public class Computer {
 					
 					history.add(bestMove);
 					
-					System.out.println(bestMove.moveRating);
+					System.out.println("Highest Move Rating: "+bestMove.moveRating);
 					
 					
 				}
@@ -331,29 +282,15 @@ public class Computer {
 	}
 
 	public void makeMove() {
-//		bestMoves bestMove = null;
-		System.out.println("Make move");
-
 		if (checkKingInCheck()) {
-			// try to kill the checking piece highest priority
-			System.out.println("If king check");
 
+			// clearing the validmoves because when the king is in check no move should be played
 			validMoves.clear();
+			// go to saveKing when king in check
 			saveKing();
-			// check if the piece can capture the checking piece
-//				if(bestMove.piece.canMove(checkingP.col, checkingP.row)) {
-//					// then compare the rating with the piece that can also check the piece 
-//					if(bestMove.moveRating > validMoves.get(i+1).moveRating && validMoves.get(i+1).piece.canMove(checkingP.col, checkingP.row)) {
-//						continue; 
-//					}else
-//						bestMove = validMoves.get(i+1);
-//				}else
-//					continue;
 		} else if (isValid && !checkKingInCheck()) { // make a move only if there are valid moves
-			System.out.println("If king check NOT");
-//			for(bestMoves BM: validMoves) {
-//				System.out.println(BM.piece + " "+BM.bestCol +" " + BM.bestRow +" "+ BM.moveRating);
-//			}
+
+			// if the king is not in check then pass the validmoves list to decideMOve
 			decideTheMove(validMoves);
 
 		}
@@ -370,6 +307,7 @@ public class Computer {
 		targetCol = cActiveP.col;
 		targetRow = cActiveP.row + 1;
 
+		// setting condition to priotize the center pawns to capture the center
 		if (cActiveP.canMove(targetCol, targetRow)) {
 			validMovesCount++;
 
@@ -422,9 +360,8 @@ public class Computer {
 	}
 
 	public void cKing() {
-//		cActiveP.detectPiece(targetCol, targetRow);	
-		// same row col +1/-1, same col row+1/-1, col row +1/-1
 
+		// formula derived: row = +0 and column +-1; column = +0 and row +-1, row and column both +-1
 		int directions[][] = { {0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 }, { 1, 1 }, { -1, -1 }, { 1, -1 }, { -1, 1 } };
 
 		for (int dir[] : directions) {
@@ -453,9 +390,7 @@ public class Computer {
 
 	public void cQueen() {
 
-		// col same row++, row same col++, col and row -1,-1,and +1,+1 and -1, +1 and
-		// +1, -1;
-
+		// col same row++, row same col++, col and row -1,-1,and +1,+1 and -1, +1 and +1, -1;
 		int[][] directions = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 }, { -1, -1 }, { 1, 1 }, { -1, 1 }, { 1, -1 } };
 
 		for (int[] dir : directions) {
@@ -471,8 +406,6 @@ public class Computer {
 				validMovesCount++;
 
 				isValid = true;
-
-//			setMax(moveRating, col, row);	
 
 				bestMoves p = new bestMoves(cActiveP.getIndex(), col, row, cActiveP.col, cActiveP.row, moveRating,
 						cActiveP);
@@ -502,8 +435,6 @@ public class Computer {
 			int row = cActiveP.row + rowDelta;
 
 			while (cActiveP.canMove(col, row)) {
-//		            double moveRating = 1.0;
-
 				validMovesCount++;
 
 				isValid = true;
@@ -563,9 +494,6 @@ public class Computer {
 	}
 
 	public void cKnight() {
-
-		// (targetcol - activeCol) * (targetrow - activerow) == 2
-		// row and column +1 atleast and max +2 each
 
 		int[][] directions = { { 1, -2 }, { 1, 2 }, { -1, -2 }, { -1, 2 }, { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 } };
 
@@ -715,7 +643,8 @@ public class Computer {
 	
 	public double tradeValue(bestMoves Piece) {
 		
-		
+		System.out.println("");// to create a new line
+
 		boolean selfCaptured = false; // check if computers piece is being captured
 		boolean underAttack = false; // check if computers piece is under threat
 		boolean capturePlayerPiece = false; // check is can capture players piece
@@ -747,8 +676,8 @@ public class Computer {
 		// that trade value must be also considered
 
 		// case 1
-		System.out.println("Checking 0.1: " + Piece.piece + " " + Piece.activeCol + " " + Piece.activeRow);
-		System.out.println(Piece.bestCol +" "+ Piece.bestRow);
+		System.out.println("Checking " + Piece.piece + " At: " + Piece.activeCol + " " + Piece.activeRow);
+		System.out.println("To: "+ Piece.bestCol +" "+ Piece.bestRow);
 
 		for (ChessPieces P : PanelGame.simpieces) {
 
@@ -756,48 +685,34 @@ public class Computer {
 
 				if ((P instanceof Pawn)) {
 					if (((Pawn) P).canMove(Piece.bestCol, Piece.bestRow, 1)) {
-						System.out.println(tradeValue + " pawn before" + Piece.bestCol + " " + Piece.bestRow);
-
+						System.out.println("Pawn Can Capture !");
 						tradeValue -= compPieceValue;
 						selfCaptured = true;
-						System.out.println(tradeValue + " pawn after");
+						System.out.println("Trade Value: "+tradeValue);
 					}
 				} else if (!(P instanceof Pawn) && P.canMove(Piece.bestCol, Piece.bestRow, 1)) {
-
-					System.out.println(P + " can move to: ");
-					System.out.println(tradeValue + " piece before " + Piece.bestCol + " " + Piece.bestRow);
-
+					System.out.println( P+ " Can Capture !");
 					tradeValue -= compPieceValue;
 					selfCaptured = true;
-					System.out.println(tradeValue + " piece after");
+					System.out.println("Trade Value: "+tradeValue);
 				}
 
 			}
 		}
 		// Case 2
-//		for (ChessPieces P : PanelGame.simpieces) {
-//
-//			if (P.color == PanelGame.compColor && P == Piece.piece) { // check if the piece is of computer and is the
-																		// piece for which shield should be determined
 				for (ChessPieces P2 : PanelGame.simpieces) {
 
 					// Find if any opponent piece can capture the activeP of comp
 					if (P2.color != PanelGame.compColor && P2.canMove(Piece.activeCol, Piece.activeRow)) { 
-						
-//						System.out.println("Opponent Piece " + P2);
 						for (ChessPieces P3 : PanelGame.simpieces) {
 							// Find if the opponent piece can capture any other except activeP
-
 							if ((P3.color == PanelGame.compColor) && (P3 != Piece.piece)
 									&& (P2.canMove(P3.col, P3.row, true))) {
-								
 								if (getAttackDirection(P3.col, P3.row, P2) == getAttackDirection(Piece.activeCol,
 										Piece.activeRow, P2)) { // if both are in same attack direction
-								System.out.println(tradeValue+" shield before");
-
+								System.out.println(P3 + " is in Shield !");
 									tradeValue -= getPieceValue(P3);
-								System.out.println("PIECE : "+ P3);
-								System.out.println(tradeValue+" shield after");
+									System.out.println("Trade Value: "+tradeValue);
 									break;
 								}
 
@@ -806,8 +721,6 @@ public class Computer {
 
 					}
 				}
-//			}
-//		}
 		// check if a piece is under attack.. then the piece's move rating is increased
 		// by its piece value so that the move is favored to save the piece if only the
 		// target square is safe
@@ -817,8 +730,10 @@ public class Computer {
 					for (ChessPieces pi2 : PanelGame.simpieces) {
 						if (pi2.color != PanelGame.compColor) {
 							if (!pi2.canMove(Piece.bestCol, Piece.bestRow,true)) {
+								System.out.println("Self Under Attack: ");
 								tradeValue += getPieceValue(Piece.piece);
 								underAttack = true;
+								System.out.println("Trade Value: "+tradeValue);
 								break;
 							}
 						}
@@ -827,21 +742,20 @@ public class Computer {
 			}
 		}
 		
-		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured && !underAttack && !capturePlayerPiece && !anyPieceInThreat())
-			{
+		if(canCheckKing(Piece.piece,Piece.bestCol, Piece.bestRow) && !selfCaptured &&
+				!underAttack && !capturePlayerPiece && !anyPieceInThreat()){
+
+			System.out.println("Can Check King !");
 			tradeValue += 5;
-			System.out.println(" From Check: "+ tradeValue);
-
-			}
+			System.out.println("Trade Value: "+tradeValue);
+		}
 		try {
-
-		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece)
-//			if(history.get(0).activeCol == Piece.bestCol && history.get(0).activeRow == Piece.bestRow)
-				{
+		// check for repeating moves
+		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece) {
 				tradeValue -= 3;
-				}
+		}
 		}catch(Exception e) {}
-		System.out.println(tradeValue + " exit staus value");
+
 		return tradeValue;
 		}else
 			return -1000;
@@ -897,7 +811,6 @@ public class Computer {
 		for(ChessPieces P: PanelGame.simpieces) {
 			
 			if(P.color != PanelGame.compColor && (P instanceof King)) {
-//				System.out.println("KING FOUNND "+ P);
 				return P;
 			}
 		}
@@ -908,9 +821,7 @@ public class Computer {
 	private boolean canCheckKing(ChessPieces piece, int targetCol, int targetRow) {
 		
 		// this method will be used to make the piece make a move closer to the king to make a check
-		
-//		System.out.println("From CanCHECK: "+ piece+" "+ targetCol+ " "+ targetRow);
-		
+
 		int tempRow = piece.prerow;
 		int tempCol = piece.precol;
 		// to check for if the piece can check a king we need look for the piece's attacking line if
@@ -922,9 +833,6 @@ public class Computer {
 		if(playerKing != null) {
 			piece.precol = targetCol;
 			piece.prerow = targetRow;
-//			System.out.println("From CanCHECK: 01"+ piece.precol+" "+ piece.prerow);
-//			System.out.println("From CanCHECK: 02"+ playerKing.col+" "+ playerKing.row);
-
 			if(piece.canMove(playerKing.col, playerKing.row) && !(piece instanceof  Pawn)) {
 				piece.precol = tempCol; // resetting the col and row of the piece
 				piece.prerow = tempRow;

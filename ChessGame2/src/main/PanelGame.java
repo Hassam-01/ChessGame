@@ -296,6 +296,7 @@ public class PanelGame extends JPanel implements Runnable {
                 }
             }
         }
+        return king;
     }
 
     // opponent can capture king
@@ -373,14 +374,14 @@ public class PanelGame extends JPanel implements Runnable {
 
         canMove = false;
         validSquare = false;
-	    
+
         // updating the position of the piece according to the mouse movements
         compPiece.x = compPiece.getX(compPiece.col);
         compPiece.y = compPiece.getY(compPiece.row);
 
         compPiece.col = compPiece.getCol(compPiece.x);
         compPiece.row = compPiece.getRow(compPiece.y);
-	 
+
         canMove = true;
 
         if (compPiece.hittingPiece != null) {
