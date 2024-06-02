@@ -13,8 +13,6 @@ public class ColorSelect extends JFrame implements WindowListener, ActionListene
     JButton black;
     JButton white;
     public ColorSelect(){
-        System.out.println("Color Wind");
-
         ImageIcon backgroundIcon = null;
         try {
             Image backgroundImage = ImageIO.read(getClass().getResource("/piece/Wallpaper2.png"));

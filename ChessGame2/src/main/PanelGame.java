@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import javax.swing.*;
+import java.util.List;
 import java.util.Scanner;
 
 public class PanelGame extends JPanel implements Runnable {
@@ -73,15 +74,26 @@ public class PanelGame extends JPanel implements Runnable {
     public static ChessPieces castlingPiece; // used for castling of kind and rook
 
     private JButton homeButton;
-    private JScrollPane scrollBar;
+    private int textCount =0;
+//    private JScrollPane scrollBar;
+
+    MovesPanel MP = new MovesPanel();
+    JScrollPane scrollBar = new JScrollPane(MP);
+
+
 
     // ! Constructor for PanelGame
     public PanelGame(int MODE) {
+
         PanelGame.MODE = MODE; // setting the mode
         setPreferredSize(new Dimension(WIDTH, HEIGHT)); // ? defining the size of the panel
         setBackground(Color.black); // ? setting the background as black
 
         setLayout(null);
+
+        scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollBar.setBounds(720, 350, 250, 200);
+        add(scrollBar);
 
         homeButton = new JButton("Home");
         homeButton.setBounds(800, 600, 90, 30);
@@ -104,6 +116,7 @@ public class PanelGame extends JPanel implements Runnable {
         addMouseMotionListener(mouse); // Adding mouse motion listener
         addMouseListener(mouse);
         add(homeButton);
+
         // ? Setting the pieces on the board
         setPieces();
 
@@ -720,97 +733,83 @@ public class PanelGame extends JPanel implements Runnable {
         activePiece = null;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        // * Board
+
+        // Draw the board
         board.draw(g2);
 
-        // * Pieces
-        ArrayList<ChessPieces> copy = new ArrayList<>(simpieces);
-        for (ChessPieces P : copy) {
-            P.draw(g2);
+        // Draw the pieces
+        List<ChessPieces> copy = new ArrayList<>(simpieces);
+        for (ChessPieces piece : copy) {
+            piece.draw(g2);
         }
 
-        // drawing white square where the piece can move where mouse is hovering
+        // Draw possible move squares and handle active piece
         if (activePiece != null) {
+            int squareX = activePiece.col * Board.SQUARE_SIZE;
+            int squareY = activePiece.row * Board.SQUARE_SIZE;
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+
             if (canMove) {
                 if (illegalMove(activePiece) || opponentCanCaptureKing()) {
                     g2.setColor(Color.GRAY);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
-                    g2.fillRect(activePiece.col * Board.SQUARE_SIZE, activePiece.row * Board.SQUARE_SIZE,
-                            Board.SQUARE_SIZE, Board.SQUARE_SIZE);
-
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-
-                    activePiece.draw(g2);
                 } else {
                     g2.setColor(Color.WHITE);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
-                    g2.fillRect(activePiece.col * Board.SQUARE_SIZE, activePiece.row * Board.SQUARE_SIZE,
-                            Board.SQUARE_SIZE, Board.SQUARE_SIZE);
-
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-
-                    activePiece.draw(g2);
                 }
-
-
+                g2.fillRect(squareX, squareY, Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+                activePiece.draw(g2);
+            } else if (!activePiece.ownSquare(activePiece.col, activePiece.row) && activePiece.isValidSquare(activePiece.col, activePiece.row)) {
+                g2.setColor(new Color(255, 0, 0, 100)); // Semi-transparent red
+                g2.fillRect(squareX, squareY, Board.SQUARE_SIZE, Board.SQUARE_SIZE);
             }
-            // drawing red box when the hovering move is not valid
-            else if (!activePiece.ownSquare(activePiece.col, activePiece.row) && activePiece.isValidSquare(activePiece.col, activePiece.row)) {
-                g2.setColor(new Color(255, 0, 0, 100)); // Red color with alpha (178/255) for opacity
-                g2.fillRect(activePiece.col * Board.SQUARE_SIZE, activePiece.row * Board.SQUARE_SIZE,
-                        Board.SQUARE_SIZE, Board.SQUARE_SIZE);
-
-
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            }
-
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
-        // Set font for text
-        g2.setFont(new Font("Book Antique", Font.PLAIN, 30));
-
-        // Set color for text
-        g2.setColor(Color.WHITE);
 
         // Draw text indicating whose turn it is
+        g2.setFont(new Font("Book Antique", Font.PLAIN, 30));
+        g2.setColor(Color.WHITE);
         String turnText = (currentColor == WHITE) ? "White's Turn" : "Black's Turn";
         g2.drawString(turnText, 750, 50);
+
+        // Draw check message if applicable
         if (checkingP != null) {
             g2.setColor(Color.RED);
-            String CheckMsg = "King is in Check";
-            g2.drawString(CheckMsg, 750, 160);
+            g2.drawString("King is in Check", 750, 160);
         }
 
-        drawMovesPlayed(g2); // drawing the moves played
+        // Draw moves played
+        drawMovesPlayed(g2);
 
-
+        // Draw promotion choices
         if (promotion) {
             g2.drawString("Promote To:", 750, 150);
-            for (ChessPieces P : promoPiece) {
-                g2.drawImage(P.image, P.getX(P.col), P.getY(P.row), Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
+            for (ChessPieces piece : promoPiece) {
+                g2.drawImage(piece.image, piece.getX(piece.col), piece.getY(piece.row), Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
             }
         }
 
+        // Draw game over messages
         if (gameOver || compLose) {
             g2.setColor(Color.GREEN);
             String gameOverMsg;
-            if (MODE == PVsC)
-                gameOverMsg = (currentColor == compColor) ? "You Loose.. !" : "You Win..!";
-            else
+            if (MODE == PVsC) {
+                gameOverMsg = (currentColor == compColor) ? "You Lose.. !" : "You Win..!";
+            } else {
                 gameOverMsg = (currentColor == WHITE) ? "White Wins" : "Black Wins";
+            }
             g2.drawString(gameOverMsg, 750, 190);
         }
 
+        // Draw stalemate message
         if (stalemate) {
             g2.setColor(Color.GREEN);
-            String gameOverMsg = "It's a Draw! Stalemate";
-            g2.drawString(gameOverMsg, 700, 200);
+            g2.drawString("It's a Draw! Stalemate", 700, 200);
         }
-
-
     }
+
 
     // method to get which column the piece moved
     private String getFile() {
@@ -836,15 +835,14 @@ public class PanelGame extends JPanel implements Runnable {
     }
 
 	private void drawMovesPlayed(Graphics2D g2){
-
-        MovesPanel MP = new MovesPanel();
-       JScrollPane scrollBar = new JScrollPane(MP);
-
-        scrollBar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollBar.setBounds(720, 350, 250, 200);
-        add(scrollBar);
+//    System.out.println("DRAW PANEL");
+//        MovesPanel.textCount = this.textCount;
+//        textCount++;
+        MP.repaint();
 
         MP.setPreferredSize(new Dimension(250, MP.getPreferredSize().height));
+        JScrollBar bar = scrollBar.getVerticalScrollBar();
+        bar.setValue(bar.getMaximum());
         scrollBar.validate();
 	}
 

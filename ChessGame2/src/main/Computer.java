@@ -304,8 +304,13 @@ public class Computer {
 	// method to check the moves of pawn and add the highest rated move to the array
 	public void cPawn() {
 
+		int step = 0;
+		if(PanelGame.compColor == 0){
+			step = 1;
+		}else
+			step = -1;
 		targetCol = cActiveP.col;
-		targetRow = cActiveP.row + 1;
+		targetRow = cActiveP.row + step;
 
 		// setting condition to priotize the center pawns to capture the center
 		if (cActiveP.canMove(targetCol, targetRow)) {
@@ -320,31 +325,31 @@ public class Computer {
 
 		}
 
-		if (cActiveP.canMove(targetCol, targetRow + 1)) {
+		if (cActiveP.canMove(targetCol, targetRow + step)) {
 			validMovesCount++;
 			if (cActiveP.col >= 0 && cActiveP.col < 3 || cActiveP.col > 3 && cActiveP.col <= 7)
 				moveRating = 0.5;
 			else
 				moveRating = 1.25;
 
-			setMax(moveRating, targetCol, targetRow + 1);
+			setMax(moveRating, targetCol, targetRow + step);
 
 		}
 
-		if (cActiveP.canMove(targetCol + 1, targetRow)) {
+		if (cActiveP.canMove(targetCol + step, targetRow)) {
 			validMovesCount++;
 
 			moveRating = 1;
 
-			setMax(moveRating, targetCol + 1, targetRow);
+			setMax(moveRating, targetCol + step, targetRow);
 		}
 
-		if (cActiveP.canMove(targetCol - 1, targetRow)) {
+		if (cActiveP.canMove(targetCol - step, targetRow)) {
 			validMovesCount++;
 
 			moveRating = 1;
 
-			setMax(moveRating, targetCol - 1, targetRow);
+			setMax(moveRating, targetCol - step, targetRow);
 
 		}
 
@@ -751,8 +756,10 @@ public class Computer {
 		}
 		try {
 		// check for repeating moves
-		if(history.get(0).piece == Piece.piece && !selfCaptured && !capturePlayerPiece) {
-				tradeValue -= 3;
+		if(history.get(0).piece == Piece.piece && !underAttack && !capturePlayerPiece) {
+			System.out.println("Repeating Move: ");
+			tradeValue -= 3;
+			System.out.println("Trade Value: "+tradeValue);
 		}
 		}catch(Exception e) {}
 
